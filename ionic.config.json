@@ -1,5 +1,7 @@
 {
   "name": "arduino-smart-home",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
