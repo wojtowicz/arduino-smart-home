@@ -1,9 +1,22 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab Three
+     List Wifi AP
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content padding>
+
+    <ion-button color="primary" (click)="getNetworks()">Get Networks</ion-button>
+    {{info_txt}}
+    <ion-list>
+        <ion-item *ngFor="let data of results" (click)="openConnectWifiModalPage(data.SSID)">
+            {{data.SSID}} -
+            {{data.BSSID}}
+        </ion-item>
+        <!-- <ion-item *ngFor="let data of results" (click)="openConnectWifiModalPage(data)">
+            {{data}}
+        </ion-item> -->
+      </ion-list>
+</ion-content>
