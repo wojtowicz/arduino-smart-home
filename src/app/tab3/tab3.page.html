@@ -8,15 +8,10 @@
 
 <ion-content padding>
 
-    <ion-button color="primary" (click)="getNetworks()">Get Networks</ion-button>
-    {{info_txt}}
+    <ion-button color="primary" (click)="getNetworks()">Refresh Devices</ion-button>
     <ion-list>
-        <ion-item *ngFor="let data of results" (click)="openConnectWifiModalPage(data.SSID)">
-            {{data.SSID}} -
-            {{data.BSSID}}
+        <ion-item *ngFor="let data of getResults()" (click)="openConnectWifiModalPage(data.SSID)">
+            {{data.SSID}}
         </ion-item>
-        <!-- <ion-item *ngFor="let data of results" (click)="openConnectWifiModalPage(data)">
-            {{data}}
-        </ion-item> -->
       </ion-list>
 </ion-content>
