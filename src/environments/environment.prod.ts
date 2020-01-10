@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  local: false,
+  message: 'hello prod'
 };
