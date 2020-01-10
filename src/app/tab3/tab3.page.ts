@@ -17,7 +17,7 @@ export class Tab3Page {
 
   results = [];
   info_txt = "";
-  isDeviceConnected = false;
+  deviceStatus = "";
 
   async presentLoading() {
     const loading = await this.loadingController.create({
@@ -47,7 +47,7 @@ export class Tab3Page {
 
   getResults() {
     return this.results.filter((item) => {
-      if(this.isDeviceConnected)
+      if(this.isDeviceConnected())
         return !item.SSID.includes('SmartHome')
       else
         return item.SSID.includes('SmartHome')
@@ -63,15 +63,24 @@ export class Tab3Page {
       component: ConnectWifiModalPage,
       componentProps: {
         'ssid': ssid,
-        'isDeviceConnected': this.isDeviceConnected
+        'isDeviceConnected': this.isDeviceConnected()
       }
     });
 
     modal.onDidDismiss()
       .then((data) => {
-        this.isDeviceConnected = data['data'];
+        this.deviceStatus = data['data']['status'];
+        if(this.isDeviceConfigured()) this.getNetworks();
     });
 
     return await modal.present();
+  }
+
+  isDeviceConnected() {
+    return this.deviceStatus == 'connected'
+  }
+
+  isDeviceConfigured() {
+    return this.deviceStatus == 'configured'
   }
 }
