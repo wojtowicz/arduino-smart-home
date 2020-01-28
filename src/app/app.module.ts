@@ -18,11 +18,19 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { ConnectWifiModalPage } from '../app/connect-wifi-modal/connect-wifi-modal.page'
 
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { InMemoryDataService }  from './services/in-memory-data.service';
+
 @NgModule({
   declarations: [AppComponent, ConnectWifiModalPage],
   entryComponents: [ConnectWifiModalPage],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
-    HttpClientModule, IonicStorageModule.forRoot(), FormsModule
+    HttpClientModule, IonicStorageModule.forRoot(), FormsModule,
+    HttpClientInMemoryWebApiModule.forRoot(
+      InMemoryDataService, {
+        dataEncapsulation: false, delay: 1500, passThruUnknownUrl: true
+      }
+    )
   ],
   providers: [
     StatusBar,

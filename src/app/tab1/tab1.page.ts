@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 
+import { Device } from '../models/device';
+import { DeviceService } from '../services/device.service';
+import { GuiHelper } from '../helpers/gui.helper';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -7,6 +11,20 @@ import { Component } from '@angular/core';
 })
 export class Tab1Page {
 
-  constructor() {}
+  devices: Device[];
+
+  constructor(
+    private deviceService: DeviceService, private guiHelper: GuiHelper
+  ) {}
+
+  ngOnInit() {
+    this.getDevices();
+  }
+
+  getDevices(): void {
+    this.guiHelper.wrapLoading(
+      this.deviceService.getDevices()
+    ).subscribe(devices => this.devices = devices);
+  }
 
 }
