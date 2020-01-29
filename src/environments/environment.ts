@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   local: false,
+  dataSource: 'remote',
   message: 'hello dev'
 };
 

@@ -1,11 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
 
-import { environment } from '../../environments/environment';
-
 import { WifiNetworkService }  from '../services/device/wifi-network.service';
-
-declare var WifiWizard2: any;
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-connect-wifi-modal',
@@ -15,7 +12,6 @@ declare var WifiWizard2: any;
 export class ConnectWifiModalPage {
 
   @Input() ssid: string;
-  @Input() isDeviceConnected: boolean;
   password: string;
   loading: any;
 
@@ -29,41 +25,20 @@ export class ConnectWifiModalPage {
     this.modalController.dismiss();
   }
 
-  async connect() {
+  async saveWifi() {
     this.loading = this.presentLoading();
-    if(this.isDeviceConnected)
-      this.saveWifi();
-    else
-      this.connectToDevice();
-  }
-
-  saveWifi() {
-    this.wifiNetworkService.connect(this.ssid, this.password)
-        .subscribe(() => this.closeModal('configured'));
+    if(environment.local){
+      this.closeModal(true);
+    } else {
+      this.wifiNetworkService.connect(this.ssid, this.password)
+      .subscribe(() => this.closeModal(true));
+    }
   };
 
-  async connectToDevice() {
-    if(environment.local){
-      this.closeModal('connected');
-    } else {
-      this.connectToWifi();
-    }
-  }
-
-  async connectToWifi() {
-    try {
-      let connectionStatus = await WifiWizard2.connect(this.ssid, true, this.password);
-      let status = connectionStatus == 'NETWORK_CONNECTION_COMPLETED' ? "connected" : ""
-      this.closeModal(status);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async closeModal(status: string) {
+  async closeModal(status: boolean) {
     (await this.loading).dismiss();
     this.modalController.dismiss({
-      'status': status
+      'configured': status
     });
   }
 

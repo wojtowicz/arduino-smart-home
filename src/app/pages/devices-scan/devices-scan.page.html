@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Devices Scan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-button color="primary" (click)="scanWifi()">Scan</ion-button>
+  <ion-list>
+      <ion-item *ngFor="let wifiDevice of wifiDevices" (click)="openConnectWifiModalPage(wifiDevice.SSID)">
+          {{wifiDevice.SSID}}
+      </ion-item>
+    </ion-list>
+</ion-content>

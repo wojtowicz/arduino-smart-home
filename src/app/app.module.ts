@@ -16,14 +16,12 @@ import { FormsModule } from '@angular/forms';
 import { Camera } from '@ionic-native/camera/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 
-import { ConnectWifiModalPage } from '../app/connect-wifi-modal/connect-wifi-modal.page'
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService }  from './services/in-memory-data.service';
 
 @NgModule({
-  declarations: [AppComponent, ConnectWifiModalPage],
-  entryComponents: [ConnectWifiModalPage],
+  declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     HttpClientModule, IonicStorageModule.forRoot(), FormsModule,
     HttpClientInMemoryWebApiModule.forRoot(
