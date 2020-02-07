@@ -17,7 +17,7 @@ $RECYCLE.BIN/
 log.txt
 npm-debug.log*
 
-src/environments/environment.
+src/environments/environment.*
 
 /.idea
 /.ionic
