@@ -11,7 +11,7 @@
 
   <ion-button color="primary" (click)="scanWifi()">Scan</ion-button>
   <ion-list>
-      <ion-item *ngFor="let wifiDevice of wifiDevices" (click)="openConnectWifiModalPage(wifiDevice.SSID)">
+      <ion-item *ngFor="let wifiDevice of wifiDevices" (click)="openDeviceConnectModalPage(wifiDevice.SSID)">
           {{wifiDevice.SSID}}
       </ion-item>
     </ion-list>

@@ -24,7 +24,11 @@ export class WifiNetworkService {
   }
 
   getWifiNetworks() {
-    return this.http.get(this.url(), this.httpOptions)
+    return this.http.get(this.url(), this.httpOptions);
+  }
+
+  getInfo() {
+    return this.http.get(this.url() + "/info", this.httpOptions);
   }
 
   connect (ssid: string, password: string): Observable<any> {

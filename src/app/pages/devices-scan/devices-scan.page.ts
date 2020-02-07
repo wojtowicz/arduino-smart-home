@@ -44,18 +44,18 @@ export class DevicesScanPage implements OnInit {
     ).subscribe(wifiDevices => this.wifiDevices = wifiDevices);
   }
 
-  async openConnectWifiModalPage(ssid: string) {
+  async openDeviceConnectModalPage(ssid: string) {
     const modal = await this.modalController.create({
       component: DeviceConnectModalPage,
       componentProps: {
-        'ssid': ssid
+        'ssid': ssid,
       }
     });
 
     modal.onDidDismiss()
       .then((data) => {
         let connected = data['data']['connected'];
-        if(connected) this.router.navigate(['/wifi_networks']);
+        if(connected) this.router.navigate(['/devices', ssid, 'wifi_networks' ]);
     });
 
     return await modal.present();

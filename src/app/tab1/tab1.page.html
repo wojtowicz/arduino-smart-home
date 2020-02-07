@@ -5,7 +5,7 @@
     </ion-title>
   </ion-toolbar>
   <ion-fab vertical="top" horizontal="end" slot="fixed">
-    <ion-fab-button routerLink="/devices/scan">
+    <ion-fab-button (click)="onAddDevice()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
@@ -20,7 +20,9 @@
     <ion-item *ngFor="let device of devices" lines="full">
       <ion-label>
         <h2>{{device.name}}</h2>
-        <p>{{device.status | titlecase }}</p>
+        <p [class.append-moving-dots]="device.status === 'configuring'">
+          {{device.status | titlecase }}
+        </p>
       </ion-label>
     </ion-item>
   </ion-list>

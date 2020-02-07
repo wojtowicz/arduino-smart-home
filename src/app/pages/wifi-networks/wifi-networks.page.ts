@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { WifiNetworkService } from '../../services/device/wifi-network.service';
 import { catchError } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
+import { of, Observable, forkJoin } from 'rxjs';
 
 import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-modal.page';
 
@@ -15,30 +15,39 @@ import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-moda
 })
 export class WifiNetworksPage implements OnInit {
 
-  wifiNetworks = [];
-  loading = false;
+  wifiNetworks:any = [];
+  info:any = {};
+  loading:boolean = false;
   @Input() ssid: string;
+  deviceName: string;
   password: string;
 
   constructor(
     private wifiNetworkService: WifiNetworkService,
     private router: Router,
     public modalController: ModalController,
-    public loadingController: LoadingController
+    public loadingController: LoadingController,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit() {
+    this.deviceName = this.route.snapshot.paramMap.get('name');
     this.getWifiNetworks();
   }
 
   getWifiNetworks(): void {
     this.loading = true;
-    this.wifiNetworkService.getWifiNetworks()
-    .pipe(
-      catchError(this.handleError<any>('wifi_networks/connect'))
+    forkJoin(
+      this.wifiNetworkService.getWifiNetworks().pipe(
+        catchError(this.handleError<any>('wifi_networks/connect'))
+      ),
+      this.wifiNetworkService.getInfo().pipe(
+        catchError(this.handleError<any>('wifi_networks/info'))
+      )
     )
-    .subscribe(wifiNetworks => {
-      this.wifiNetworks = wifiNetworks
+    .subscribe(([wifiNetworks, info]) => {
+      this.wifiNetworks = wifiNetworks;
+      this.info = info;
       this.loading = false;
     });
   }
@@ -47,14 +56,16 @@ export class WifiNetworksPage implements OnInit {
     const modal = await this.modalController.create({
       component: ConnectWifiModalPage,
       componentProps: {
-        'ssid': ssid
+        'ssid': ssid,
+        'uuid': this.info.uuid,
+        'deviceName': this.deviceName
       }
     });
 
     modal.onDidDismiss()
       .then((data) => {
         let configured = data['data']['configured'];
-        if(configured) this.router.navigate(['/']);
+        if(configured) this.router.navigate(['/tabs/tab1']);
     });
 
     return await modal.present();

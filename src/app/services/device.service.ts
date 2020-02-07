@@ -4,14 +4,16 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { Device } from '../models/device';
-// import { DEVICES } from '../mocks/mock-devices';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
-  private url = 'http://localhost:3000';
-  private devicesUrl = 'api/devices';
+  dataSources = {
+    'local': 'api/devices',
+    'remote': '/devices'
+  }
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,18 +21,18 @@ export class DeviceService {
 
   constructor(private http: HttpClient) { }
 
-  // getDevices (): Observable<any> {
-  //   return this.http.get(this.url + "/devices", this.httpOptions).pipe(
-  //     catchError(this.handleError<any>('getDevices'))
-  //   );
-  // }
+  url(){
+    return environment.apiBaseUrl + this.dataSources[environment.dataSource]
+  }
 
-  // getDevices(): Observable<Device[]> {
-  //   return of(DEVICES);
-  // }
+  addDevice(device: Device): Observable<Device> {
+    return this.http.post<Device>(this.url(), device, this.httpOptions).pipe(
+      catchError(this.handleError<Device>('addDevice'))
+    );
+  }
 
   getDevices (): Observable<Device[]> {
-    return this.http.get<Device[]>(this.devicesUrl)
+    return this.http.get<Device[]>(this.url())
       .pipe(
         catchError(this.handleError<Device[]>('getDevices', []))
       );

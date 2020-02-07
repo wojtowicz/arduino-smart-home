@@ -11,7 +11,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/devices-scan/devices-scan.module').then( m => m.DevicesScanPageModule)
   },
   {
-    path: 'wifi_networks',
+    path: 'devices/:name/wifi_networks',
     loadChildren: () => import('./pages/wifi-networks/wifi-networks.module').then( m => m.WifiNetworksPageModule)
   },
 
