@@ -2,6 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 
+
+import { DeviceConnectService } from '../../../services/device-connect.service';
+
 declare var WifiWizard2: any;
 
 @Component({
@@ -17,7 +20,8 @@ export class DeviceConnectModalPage implements OnInit {
 
   constructor(
     public modalController: ModalController,
-    public loadingController: LoadingController
+    public loadingController: LoadingController,
+    private deviceConnectService: DeviceConnectService
   ) { }
 
   ngOnInit() {
@@ -38,11 +42,8 @@ export class DeviceConnectModalPage implements OnInit {
 
   async connect() {
     this.loading = this.presentLoading();
-    if(environment.local){
-      this.closeModal(true);
-    } else {
-      this.connectToWifi();
-    }
+    this.deviceConnectService.connect(this.ssid, this.password)
+                             .subscribe(status => this.closeModal(status));
   }
 
   async closeModal(status: boolean) {

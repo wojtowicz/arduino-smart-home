@@ -10,7 +10,14 @@ import { environment } from 'src/environments/environment';
 export class WifiNetworkService {
   dataSources = {
     'local': 'api/wifiNetworks',
-    'remote': 'http://192.168.4.1/wifi_networks'
+    'remote': 'http://192.168.4.1/wifi_networks',
+    'localhost': 'api/wifiNetworks',
+  }
+
+  infoDataSources = {
+    'local': 'api/wifiNetworks',
+    'remote': 'http://192.168.4.1/info',
+    'localhost': 'api/wifiNetworks',
   }
 
   httpOptions = {
@@ -19,8 +26,12 @@ export class WifiNetworkService {
 
   constructor(private http: HttpClient) { }
 
-  url(){
+  url() {
     return this.dataSources[environment.dataSource]
+  }
+
+  infoUrl() {
+    return this.infoDataSources[environment.dataSource]
   }
 
   getWifiNetworks() {
@@ -28,7 +39,7 @@ export class WifiNetworkService {
   }
 
   getInfo() {
-    return this.http.get(this.url() + "/info", this.httpOptions);
+    return this.http.get(this.infoUrl(), this.httpOptions);
   }
 
   connect (ssid: string, password: string): Observable<any> {

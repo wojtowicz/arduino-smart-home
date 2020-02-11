@@ -15,7 +15,8 @@ export class WifiDeviceService {
 
   dataSources = {
     'local': this.localWifiDeviceSourceService,
-    'remote': this.remoteWifiDeviceSourceService
+    'remote': this.remoteWifiDeviceSourceService,
+    'localhost': this.localWifiDeviceSourceService
   }
 
   constructor(

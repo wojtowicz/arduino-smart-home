@@ -3,7 +3,5 @@ export class Device {
   name: string;
   uuid: string;
   status: string;
-  lol() {
-    return status === 'configuring';
-  }
+  sync_at: any;
 }

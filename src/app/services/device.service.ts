@@ -12,7 +12,8 @@ import { environment } from 'src/environments/environment';
 export class DeviceService {
   dataSources = {
     'local': 'api/devices',
-    'remote': '/devices'
+    'remote': '/devices',
+    'localhost': '/devices',
   }
 
   httpOptions = {
@@ -25,14 +26,23 @@ export class DeviceService {
     return environment.apiBaseUrl + this.dataSources[environment.dataSource]
   }
 
-  addDevice(device: Device): Observable<Device> {
-    return this.http.post<Device>(this.url(), device, this.httpOptions).pipe(
-      catchError(this.handleError<Device>('addDevice'))
+  updateDeviceUrl(uuid: string){
+    return this.url() + '/' + uuid + '.json';
+  }
+
+  devicesUrl(){
+    return this.url() + '.json';
+  }
+
+  updateDevice(device: Device): Observable<Device> {
+    device.sync_at = null;
+    return this.http.put<Device>(this.updateDeviceUrl(device.uuid), device, this.httpOptions).pipe(
+      catchError(this.handleError<Device>('updateDevice'))
     );
   }
 
   getDevices (): Observable<Device[]> {
-    return this.http.get<Device[]>(this.url())
+    return this.http.get<Device[]>(this.devicesUrl())
       .pipe(
         catchError(this.handleError<Device[]>('getDevices', []))
       );

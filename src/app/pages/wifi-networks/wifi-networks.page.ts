@@ -57,7 +57,7 @@ export class WifiNetworksPage implements OnInit {
       component: ConnectWifiModalPage,
       componentProps: {
         'ssid': ssid,
-        'uuid': this.info.uuid,
+        'uuid': this.info.chip_id,
         'deviceName': this.deviceName
       }
     });

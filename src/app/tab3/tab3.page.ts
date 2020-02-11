@@ -30,7 +30,7 @@ export class Tab3Page {
 
   async getNetworks() {
     const loading = this.presentLoading();
-    if(environment.local){
+    if(environment.dataSource === 'local'){
       const sleep = m => new Promise(r => setTimeout(r, m))
       await sleep(2000);
       this.results = [{ SSID: 'SmartHomeSSID1' }, { SSID: 'SmartHomeSSID2' }, { SSID: 'SSID3' }];
@@ -55,7 +55,7 @@ export class Tab3Page {
   }
 
   ngOnInit() {
-    if(!environment.local) WifiWizard2.requestPermission();
+    if(environment.dataSource != 'local') WifiWizard2.requestPermission();
   }
 
   async openConnectWifiModalPage(ssid: string) {

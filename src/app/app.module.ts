@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 
 import { Camera } from '@ionic-native/camera/ngx';
+import { Network } from '@ionic-native/network/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 
 
@@ -34,6 +35,7 @@ import { InMemoryDataService }  from './services/in-memory-data.service';
     StatusBar,
     SplashScreen,
     Camera,
+    Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
