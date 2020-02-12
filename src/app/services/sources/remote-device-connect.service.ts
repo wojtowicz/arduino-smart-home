@@ -14,8 +14,8 @@ export class RemoteDeviceConnectService {
   connect(ssid: string, password: string) {
     return from(WifiWizard2.connect(ssid, true, password)).pipe(
       map(connectionStatus => {
-        return connectionStatus == 'NETWORK_CONNECTION_COMPLETED' ? true : false
+        return connectionStatus === 'NETWORK_CONNECTION_COMPLETED' ? true : false;
       }),
-    )
+    );
   }
 }

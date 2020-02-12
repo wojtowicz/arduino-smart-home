@@ -15,9 +15,9 @@ import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-moda
 })
 export class WifiNetworksPage implements OnInit {
 
-  wifiNetworks:any = [];
-  info:any = {};
-  loading:boolean = false;
+  wifiNetworks: any = [];
+  info: any = {};
+  loading = false;
   @Input() ssid: string;
   deviceName: string;
   password: string;
@@ -56,24 +56,24 @@ export class WifiNetworksPage implements OnInit {
     const modal = await this.modalController.create({
       component: ConnectWifiModalPage,
       componentProps: {
-        'ssid': ssid,
-        'uuid': this.info.chip_id,
-        'deviceName': this.deviceName
+        ssid,
+        uuid: this.info.chip_id,
+        deviceName: this.deviceName
       }
     });
 
     modal.onDidDismiss()
-      .then((data) => {
-        let configured = data['data']['configured'];
-        if(configured) this.router.navigate(['/tabs/tab1']);
+      .then((results) => {
+        const configured = results.data.configured;
+        if (configured) { this.router.navigate(['/tabs/tab1']); }
     });
 
     return await modal.present();
   }
 
-  private handleError<T> (operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error)
+      console.error(error);
       this.router.navigate(['/devices/scan']);
 
       return of(result as T);

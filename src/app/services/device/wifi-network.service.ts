@@ -9,16 +9,16 @@ import { environment } from 'src/environments/environment';
 })
 export class WifiNetworkService {
   dataSources = {
-    'local': 'api/wifiNetworks',
-    'remote': 'http://192.168.4.1/wifi_networks',
-    'localhost': 'api/wifiNetworks',
-  }
+    local: 'api/wifiNetworks',
+    remote: 'http://192.168.4.1/wifi_networks',
+    localhost: 'api/wifiNetworks',
+  };
 
   infoDataSources = {
-    'local': 'api/info',
-    'remote': 'http://192.168.4.1/info',
-    'localhost': 'api/info',
-  }
+    local: 'api/info',
+    remote: 'http://192.168.4.1/info',
+    localhost: 'api/info',
+  };
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -27,11 +27,11 @@ export class WifiNetworkService {
   constructor(private http: HttpClient) { }
 
   url() {
-    return this.dataSources[environment.dataSource]
+    return this.dataSources[environment.dataSource];
   }
 
   infoUrl() {
-    return this.infoDataSources[environment.dataSource]
+    return this.infoDataSources[environment.dataSource];
   }
 
   getWifiNetworks() {
@@ -60,8 +60,8 @@ export class WifiNetworkService {
     );
   }
 
-  connect (ssid: string, password: string): Observable<any> {
-    return this.http.post(this.url() + "/connect", {ssid: ssid, password: password}, this.httpOptions).pipe(
+  connect(ssid: string, password: string): Observable<any> {
+    return this.http.post(this.url() + '/connect', {ssid, password}, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -74,8 +74,8 @@ export class WifiNetworkService {
     );
   }
 
-  disconnect (): Observable<any> {
-    return this.http.post(this.url() + "/disconnect", {}, this.httpOptions).pipe(
+  disconnect(): Observable<any> {
+    return this.http.post(this.url() + '/disconnect', {}, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -88,7 +88,7 @@ export class WifiNetworkService {
     );
   }
 
-  private handleError<T> (operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure

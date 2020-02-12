@@ -11,16 +11,16 @@ import { environment } from 'src/environments/environment';
 })
 export class DeviceService {
   dataSources = {
-    'local': 'api/devices',
-    'remote': 'devices',
-    'localhost': 'devices',
-  }
+    local: 'api/devices',
+    remote: 'devices',
+    localhost: 'devices',
+  };
 
   dataSourceFormats = {
-    'local': '',
-    'remote': '.json',
-    'localhost': '.json',
-  }
+    local: '',
+    remote: '.json',
+    localhost: '.json',
+  };
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -28,7 +28,7 @@ export class DeviceService {
 
   constructor(private http: HttpClient) { }
 
-  url(uuid: string = ''){
+  url(uuid: string = '') {
     return [
       environment.apiBaseUrl,
       this.dataSources[environment.dataSource],
@@ -56,14 +56,14 @@ export class DeviceService {
     );
   }
 
-  getDevices (): Observable<Device[]> {
+  getDevices(): Observable<Device[]> {
     return this.http.get<Device[]>(this.url())
       .pipe(
         catchError(this.handleError<Device[]>('getDevices', []))
       );
   }
 
-  private handleError<T> (operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure

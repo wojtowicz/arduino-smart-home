@@ -15,10 +15,10 @@ import { WifiNetworkService } from './device/wifi-network.service';
 export class WifiDeviceService {
 
   dataSources = {
-    'local': this.localWifiDeviceSourceService,
-    'remote': this.remoteWifiDeviceSourceService,
-    'localhost': this.localWifiDeviceSourceService
-  }
+    local: this.localWifiDeviceSourceService,
+    remote: this.remoteWifiDeviceSourceService,
+    localhost: this.localWifiDeviceSourceService
+  };
 
   constructor(
     private localWifiDeviceSourceService: LocalWifiDeviceSourceService,

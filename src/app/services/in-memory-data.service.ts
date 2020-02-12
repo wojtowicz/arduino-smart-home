@@ -4,7 +4,7 @@ import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { getStatusText, STATUS } from 'angular-in-memory-web-api/http-status-codes';
 import { RequestInfo, ResponseOptions } from 'angular-in-memory-web-api/interfaces';
 
-const info = { mac_address: '00:11:22:33:44', chip_id: "someuuid" }
+const info = { mac_address: '00:11:22:33:44', chip_id: 'someuuid' };
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,10 @@ export class InMemoryDataService implements InMemoryDbService {
     ];
 
     const wifiNetworks = [
-      {ssid: "Orange_Swiatlowod_FAB2_2.4GHz", encryption_type: "WPA/WPA2/PSK", signal_quality: 88},
-      {ssid: "DIRECT-zvM2020 Series", encryption_type: "WPA2/PSK", signal_quality: 68},
-      {ssid: "Darmowe_Orange_WiFi", encryption_type: "Open", signal_quality: 60},
-    ]
+      {ssid: 'Orange_Swiatlowod_FAB2_2.4GHz', encryption_type: 'WPA/WPA2/PSK', signal_quality: 88},
+      {ssid: 'DIRECT-zvM2020 Series', encryption_type: 'WPA2/PSK', signal_quality: 68},
+      {ssid: 'Darmowe_Orange_WiFi', encryption_type: 'Open', signal_quality: 60},
+    ];
 
     return {devices, wifiNetworks};
   }
@@ -46,7 +46,7 @@ export class InMemoryDataService implements InMemoryDbService {
     const collectionName = reqInfo.collectionName;
     const id = reqInfo.id;
 
-    if (collectionName === 'wifiNetworks' && id == 'connect') {
+    if (collectionName === 'wifiNetworks' && id === 'connect') {
       return this.successResponse(reqInfo);
     }
     return undefined;
@@ -54,22 +54,20 @@ export class InMemoryDataService implements InMemoryDbService {
 
   private getInfo(reqInfo: RequestInfo) {
     return reqInfo.utils.createResponse$(() => {
-      const options: ResponseOptions =
-        {
+      const options: ResponseOptions = {
           body: info,
           status: STATUS.OK
-        }
+        };
       return this.finishOptions(options, reqInfo);
     });
   }
 
   private successResponse(reqInfo: RequestInfo) {
     return reqInfo.utils.createResponse$(() => {
-      const options: ResponseOptions =
-        {
+      const options: ResponseOptions = {
           body: {},
           status: STATUS.OK
-        }
+        };
       return this.finishOptions(options, reqInfo);
     });
   }

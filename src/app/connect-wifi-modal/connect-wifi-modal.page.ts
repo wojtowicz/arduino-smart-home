@@ -38,7 +38,7 @@ export class ConnectWifiModalPage {
     this.guiHelper.wrapLoading(
       this.saveWifiAndAddDevice()
     ).subscribe(() => this.closeModal(true));
-  };
+  }
 
   saveWifiAndAddDevice() {
     return new Observable(subscriber => {
@@ -59,12 +59,12 @@ export class ConnectWifiModalPage {
         uuid: this.uuid,
         status: 'configuring',
         sync_at: null
-      } as Device)
+      } as Device);
   }
 
   async closeModal(status: boolean) {
     this.modalController.dismiss({
-      'configured': status
+      configured: status
     });
   }
 

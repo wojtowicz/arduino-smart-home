@@ -15,7 +15,7 @@ import { DeviceConnectModalPage } from '../modals/device-connect-modal/device-co
 export class DevicesScanPage implements OnInit {
 
   wifiDevices = [];
-  deviceStatus = "";
+  deviceStatus = '';
 
   constructor(
     public loadingController: LoadingController,
@@ -48,14 +48,14 @@ export class DevicesScanPage implements OnInit {
     const modal = await this.modalController.create({
       component: DeviceConnectModalPage,
       componentProps: {
-        'ssid': ssid,
+        ssid
       }
     });
 
     modal.onDidDismiss()
-      .then((data) => {
-        let connected = data['data']['connected'];
-        if(connected) this.router.navigate(['/devices', ssid, 'wifi_networks' ]);
+      .then((results) => {
+        const connected = results.data.connected;
+        if (connected) { this.router.navigate(['/devices', ssid, 'wifi_networks' ]); }
     });
 
     return await modal.present();

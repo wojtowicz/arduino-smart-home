@@ -11,10 +11,10 @@ import { environment } from 'src/environments/environment';
 export class DeviceConnectService {
 
   dataSources = {
-    'local': this.localDeviceConnectService,
-    'remote': this.remoteDeviceConnectService,
-    'localhost': this.localDeviceConnectService,
-  }
+    local: this.localDeviceConnectService,
+    remote: this.remoteDeviceConnectService,
+    localhost: this.localDeviceConnectService,
+  };
 
   constructor(
     private localDeviceConnectService: LocalDeviceConnectService,

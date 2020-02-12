@@ -11,7 +11,7 @@ export class LocalWifiDeviceSourceService {
   constructor() { }
 
   scan() {
-    return from(WIFI_DEVICES).pipe(delay(2000))
+    return from(WIFI_DEVICES).pipe(delay(2000));
   }
 
   listenOnNetworkConnect() {

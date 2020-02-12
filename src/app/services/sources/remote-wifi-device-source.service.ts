@@ -19,7 +19,7 @@ export class RemoteWifiDeviceSourceService {
 
   listenOnNetworkConnect() {
     return new Observable(subscriber => {
-      let connectSubscription = this.network.onConnect().subscribe(() => {
+      const connectSubscription = this.network.onConnect().subscribe(() => {
         setTimeout(() => {
           connectSubscription.unsubscribe();
           subscriber.next();

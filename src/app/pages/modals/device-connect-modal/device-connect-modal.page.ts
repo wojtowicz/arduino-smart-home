@@ -28,7 +28,7 @@ export class DeviceConnectModalPage implements OnInit {
   }
 
   dismiss() {
-    this.modalController.dismiss({'connected': false});
+    this.modalController.dismiss({connected: false});
   }
 
   async presentLoading() {
@@ -49,14 +49,14 @@ export class DeviceConnectModalPage implements OnInit {
   async closeModal(status: boolean) {
     (await this.loading).dismiss();
     this.modalController.dismiss({
-      'connected': status
+      connected: status
     });
   }
 
   async connectToWifi() {
     try {
-      let connectionStatus = await WifiWizard2.connect(this.ssid, true, this.password);
-      let status = connectionStatus == 'NETWORK_CONNECTION_COMPLETED' ? true : false
+      const connectionStatus = await WifiWizard2.connect(this.ssid, true, this.password);
+      const status = connectionStatus === 'NETWORK_CONNECTION_COMPLETED' ? true : false;
       this.closeModal(status);
     } catch (error) {
       console.log(error);
