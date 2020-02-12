@@ -21,7 +21,7 @@ export class WifiNetworksPage implements OnInit {
 
   wifiNetworks: Array<WifiNetwork> = [];
   info: DeviceInfo;
-  loading = false;
+  loading: boolean;
   @Input() ssid: string;
   deviceName: string;
   password: string;
@@ -34,7 +34,7 @@ export class WifiNetworksPage implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.deviceName = this.route.snapshot.paramMap.get('name');
     this.getWifiNetworks();
   }
@@ -56,7 +56,7 @@ export class WifiNetworksPage implements OnInit {
     });
   }
 
-  async openConnectWifiModalPage(ssid: string) {
+  async openConnectWifiModalPage(ssid: string): Promise<void> {
     const modal = await this.modalController.create({
       component: ConnectWifiModalPage,
       componentProps: {
@@ -75,7 +75,7 @@ export class WifiNetworksPage implements OnInit {
     return await modal.present();
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
     return (error: Error | HttpErrorResponse): Observable<T> => {
       console.error(error);
       this.router.navigate(['/devices/scan']);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 /* tslint:disable no-any */
@@ -13,7 +13,7 @@ export class RemoteDeviceConnectService {
 
   constructor() { }
 
-  connect(ssid: string, password: string) {
+  connect(ssid: string, password: string): Observable<boolean> {
     return from(WifiWizard2.connect(ssid, true, password)).pipe(
       map(connectionStatus => {
         return connectionStatus === 'NETWORK_CONNECTION_COMPLETED' ? true : false;

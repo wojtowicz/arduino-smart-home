@@ -3,32 +3,34 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of, timer } from 'rxjs';
 import { catchError, shareReplay, retryWhen, delayWhen, tap, map } from 'rxjs/operators';
 
-import { Device, DeviceJson, DeviceAdapter } from '../models/device';
+import { Device, DeviceJson, DeviceJsonToDevice, DeviceToDeviceJson } from '../models/device';
 import { environment } from 'src/environments/environment';
+import { IDataSource } from '../interfaces/data-source.interface';
+import { IHttpOptions } from '../interfaces/http-options.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
-  dataSources = {
+  dataSources: IDataSource = {
     local: 'api/devices',
     remote: 'devices',
     localhost: 'devices',
   };
 
-  dataSourceFormats = {
+  dataSourceFormats: IDataSource = {
     local: '',
     remote: '.json',
     localhost: '.json',
   };
 
-  httpOptions = {
+  httpOptions: IHttpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
   constructor(private http: HttpClient) { }
 
-  url(uuid: string = '') {
+  url(uuid: string = ''): string {
     return [
       environment.apiBaseUrl,
       this.dataSources[environment.dataSource],
@@ -37,7 +39,7 @@ export class DeviceService {
   }
 
   createDevice(device: Device): Observable<Device> {
-    return this.http.put<DeviceJson>(this.url(device.uuid), device, this.httpOptions).pipe(
+    return this.http.put<DeviceJson>(this.url(device.uuid), DeviceToDeviceJson(device), this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -46,7 +48,7 @@ export class DeviceService {
                     tap(() => console.log('retrying...'))
                 );
       }),
-      map((json: DeviceJson) => DeviceAdapter(json)),
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
       catchError(this.handleError<Device>('updateDevice'))
     );
   }
@@ -61,11 +63,11 @@ export class DeviceService {
     return this.http.get<DeviceJson[]>(this.url())
       .pipe(
         catchError(this.handleError<Device[]>('getDevices', [])),
-        map((data: DeviceJson[]) => data.map(item => DeviceAdapter(item)))
+        map((data: DeviceJson[]) => data.map(item => DeviceJsonToDevice(item)))
       );
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
     return (error: Error | HttpErrorResponse): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure

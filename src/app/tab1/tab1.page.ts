@@ -14,7 +14,7 @@ import { interval, Subscription } from 'rxjs';
 export class Tab1Page {
 
   devices: Device[];
-  loading = false;
+  loading: boolean;
   configuringDevices: Subscription;
 
   constructor(
@@ -28,21 +28,21 @@ export class Tab1Page {
     });
   }
 
-  onAddDevice() {
+  onAddDevice(): void {
     this.unsubscribeConfiguringDevices();
     this.router.navigate(['/devices/scan']);
   }
 
-  subscribeConfiguringDevices() {
+  subscribeConfiguringDevices(): void {
     this.configuringDevices = interval(3000)
       .subscribe(i => this.checkConfiguringDevice(i));
   }
 
-  unsubscribeConfiguringDevices() {
+  unsubscribeConfiguringDevices(): void {
     this.configuringDevices.unsubscribe();
   }
 
-  checkConfiguringDevice(i: number) {
+  checkConfiguringDevice(i: number): void {
     const configuringDevices = this.devices.filter(device => {
       return device.status.includes('configuring');
     });
@@ -60,7 +60,7 @@ export class Tab1Page {
       .subscribe(devices => this.devices = devices);
   }
 
-  doRefresh(event) {
+  doRefresh(event: CustomEvent): void {
     this.deviceService.getDevices()
       .pipe(
         tap(devices => event.target.complete())

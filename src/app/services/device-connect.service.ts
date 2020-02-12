@@ -10,18 +10,21 @@ import { environment } from 'src/environments/environment';
 })
 export class DeviceConnectService {
 
+  /* tslint:disable typedef */
   dataSources = {
     local: this.localDeviceConnectService,
     remote: this.remoteDeviceConnectService,
     localhost: this.localDeviceConnectService,
   };
+  /* tslint:enable typedef */
+
 
   constructor(
     private localDeviceConnectService: LocalDeviceConnectService,
     private remoteDeviceConnectService: RemoteDeviceConnectService
   ) { }
 
-  connect(ssid: string, password: string) {
+  connect(ssid: string, password: string): Observable<boolean> {
     let deviceConnectObservable: Observable<boolean>;
 
     deviceConnectObservable = this.dataSources[environment.dataSource].connect(ssid, password);

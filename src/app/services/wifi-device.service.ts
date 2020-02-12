@@ -14,11 +14,13 @@ import { WifiNetworkService } from './device/wifi-network.service';
 })
 export class WifiDeviceService {
 
+  /* tslint:disable typedef */
   dataSources = {
     local: this.localWifiDeviceSourceService,
     remote: this.remoteWifiDeviceSourceService,
     localhost: this.localWifiDeviceSourceService
   };
+  /* tslint:enable typedef */
 
   constructor(
     private localWifiDeviceSourceService: LocalWifiDeviceSourceService,
@@ -26,11 +28,11 @@ export class WifiDeviceService {
     private wifiNetworkService: WifiNetworkService
   ) { }
 
-  getDataSourceDevice() {
+  getDataSourceDevice(): LocalWifiDeviceSourceService | RemoteWifiDeviceSourceService {
     return this.dataSources[environment.dataSource];
   }
 
-  scan() {
+  scan(): Observable<WifiDevice[]> {
     let wifiDeviceObservable: Observable<WifiDevice>;
 
     wifiDeviceObservable = this.getDataSourceDevice().scan();
@@ -40,7 +42,7 @@ export class WifiDeviceService {
     );
   }
 
-  saveWifi(ssid: string, password: string) {
+  saveWifi(ssid: string, password: string): Observable<void> {
     return new Observable(subscriber => {
       this.getDataSourceDevice().listenOnNetworkConnect()
       .subscribe(() => {

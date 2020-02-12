@@ -6,6 +6,7 @@ import { WifiDeviceService } from '../../services/wifi-device.service';
 import { GuiHelper } from '../../helpers/gui.helper';
 
 import { DeviceConnectModalPage } from '../modals/device-connect-modal/device-connect-modal.page';
+import { WifiDevice } from 'src/app/models/wifi_device';
 
 @Component({
   selector: 'app-devices-scan',
@@ -14,8 +15,7 @@ import { DeviceConnectModalPage } from '../modals/device-connect-modal/device-co
 })
 export class DevicesScanPage implements OnInit {
 
-  wifiDevices = [];
-  deviceStatus = '';
+  wifiDevices: WifiDevice[] = [];
 
   constructor(
     public loadingController: LoadingController,
@@ -25,11 +25,11 @@ export class DevicesScanPage implements OnInit {
     public modalController: ModalController
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.scanWifi();
   }
 
-  async presentLoading() {
+  async presentLoading(): Promise<HTMLIonLoadingElement> {
     const loading = await this.loadingController.create({
       message: 'Please wait...'
     });
@@ -38,13 +38,13 @@ export class DevicesScanPage implements OnInit {
     return loading;
   }
 
-  scanWifi() {
+  scanWifi(): void {
     this.guiHelper.wrapLoading(
       this.wifiDeviceService.scan()
     ).subscribe(wifiDevices => this.wifiDevices = wifiDevices);
   }
 
-  async openDeviceConnectModalPage(ssid: string) {
+  async openDeviceConnectModalPage(ssid: string): Promise<void> {
     const modal = await this.modalController.create({
       component: DeviceConnectModalPage,
       componentProps: {

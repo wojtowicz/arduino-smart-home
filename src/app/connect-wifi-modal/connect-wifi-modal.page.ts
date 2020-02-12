@@ -28,17 +28,17 @@ export class ConnectWifiModalPage {
     private guiHelper: GuiHelper
   ) { }
 
-  dismiss() {
+  dismiss(): void {
     this.closeModal(false);
   }
 
-  saveWifi() {
+  saveWifi(): void {
     this.guiHelper.wrapLoading(
       this.saveWifiAndAddDevice()
     ).subscribe(() => this.closeModal(true));
   }
 
-  saveWifiAndAddDevice() {
+  saveWifiAndAddDevice(): Observable<void> {
     return new Observable(subscriber => {
       this.wifiDeviceService.saveWifi(this.ssid, this.password)
       .subscribe(() => {
@@ -50,17 +50,17 @@ export class ConnectWifiModalPage {
     });
   }
 
-  addDevice() {
+  addDevice(): Observable<Device> {
     return this.deviceService.createDevice(
       {
         name: this.deviceName,
         uuid: this.uuid,
         status: 'configuring',
-        sync_at: null
+        syncAt: null
       } as Device);
   }
 
-  async closeModal(status: boolean) {
+  async closeModal(status: boolean): Promise<void> {
     this.modalController.dismiss({
       configured: status
     });

@@ -15,7 +15,7 @@ export interface DeviceJson {
   sync_at: string;
 }
 
-export function DeviceAdapter(json: DeviceJson): Device {
+export function DeviceJsonToDevice(json: DeviceJson): Device {
   return new Device(
     json.id,
     json.name,
@@ -23,4 +23,14 @@ export function DeviceAdapter(json: DeviceJson): Device {
     json.status,
     json.sync_at
   );
+}
+
+export function DeviceToDeviceJson(device: Device): DeviceJson {
+  return {
+    id: device.id,
+    name: device.name,
+    uuid: device.uuid,
+    status: device.status,
+    sync_at: device.syncAt
+  };
 }

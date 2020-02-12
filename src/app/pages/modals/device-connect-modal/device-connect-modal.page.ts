@@ -26,26 +26,26 @@ export class DeviceConnectModalPage implements OnInit {
     private guiHelper: GuiHelper
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  dismiss() {
+  dismiss(): void {
     this.closeModal(false);
   }
 
-  async connect() {
+  async connect(): Promise<void> {
     this.guiHelper.wrapLoading(
       this.deviceConnectService.connect(this.ssid, this.password)
     ).subscribe((status) => this.closeModal(status));
   }
 
-  async closeModal(status: boolean) {
+  async closeModal(status: boolean): Promise<void> {
     this.modalController.dismiss({
       connected: status
     });
   }
 
-  async connectToWifi() {
+  async connectToWifi(): Promise<void> {
     try {
       const connectionStatus = await WifiWizard2.connect(this.ssid, true, this.password);
       const status = connectionStatus === 'NETWORK_CONNECTION_COMPLETED' ? true : false;
