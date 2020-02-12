@@ -7,6 +7,7 @@ import { WifiDevice } from '../models/wifi_device';
 
 import { LocalWifiDeviceSourceService } from '../services/sources/local-wifi-device-source.service';
 import { RemoteWifiDeviceSourceService } from '../services/sources/remote-wifi-device-source.service';
+import { WifiNetworkService } from './device/wifi-network.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,16 +22,33 @@ export class WifiDeviceService {
 
   constructor(
     private localWifiDeviceSourceService: LocalWifiDeviceSourceService,
-    private remoteWifiDeviceSourceService: RemoteWifiDeviceSourceService
+    private remoteWifiDeviceSourceService: RemoteWifiDeviceSourceService,
+    private wifiNetworkService: WifiNetworkService
   ) { }
 
-  scan() {
-    let wifiNetworksObservable: Observable<WifiDevice>;
+  getDataSourceDevice() {
+    return this.dataSources[environment.dataSource];
+  }
 
-    wifiNetworksObservable = this.dataSources[environment.dataSource].scan();
-    return wifiNetworksObservable.pipe(
+  scan() {
+    let wifiDeviceObservable: Observable<WifiDevice>;
+
+    wifiDeviceObservable = this.getDataSourceDevice().scan();
+    return wifiDeviceObservable.pipe(
       filter(wifiDevice => wifiDevice.SSID.includes('SmartHome')),
       toArray()
     );
+  }
+
+  saveWifi(ssid: string, password: string) {
+    return new Observable(subscriber => {
+      this.getDataSourceDevice().listenOnNetworkConnect()
+      .subscribe(() => {
+        subscriber.next();
+        subscriber.complete();
+      });
+
+      this.wifiNetworkService.connect(ssid, password).subscribe();
+    });
   }
 }

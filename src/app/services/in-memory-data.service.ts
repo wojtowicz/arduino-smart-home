@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { getStatusText, STATUS } from 'angular-in-memory-web-api/http-status-codes';
 import { RequestInfo, ResponseOptions } from 'angular-in-memory-web-api/interfaces';
-import { Device } from '../models/device';
 
-const info = {mac_address: '00:11:22:33:44', uuid: "someuuid"}
+const info = { mac_address: '00:11:22:33:44', chip_id: "someuuid" }
 
 @Injectable({
   providedIn: 'root'
@@ -37,8 +36,7 @@ export class InMemoryDataService implements InMemoryDbService {
 
   get(reqInfo: RequestInfo) {
     const collectionName = reqInfo.collectionName;
-    const id = reqInfo.id;
-    if (collectionName === 'wifiNetworks' && id == 'info') {
+    if (collectionName === 'info') {
       return this.getInfo(reqInfo);
     }
     return undefined;

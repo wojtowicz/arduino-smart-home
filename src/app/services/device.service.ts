@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
+import { catchError, shareReplay, retryWhen, delayWhen, tap } from 'rxjs/operators';
 
 import { Device } from '../models/device';
 import { environment } from 'src/environments/environment';
@@ -12,8 +12,14 @@ import { environment } from 'src/environments/environment';
 export class DeviceService {
   dataSources = {
     'local': 'api/devices',
-    'remote': '/devices',
-    'localhost': '/devices',
+    'remote': 'devices',
+    'localhost': 'devices',
+  }
+
+  dataSourceFormats = {
+    'local': '',
+    'remote': '.json',
+    'localhost': '.json',
   }
 
   httpOptions = {
@@ -22,27 +28,36 @@ export class DeviceService {
 
   constructor(private http: HttpClient) { }
 
-  url(){
-    return environment.apiBaseUrl + this.dataSources[environment.dataSource]
+  url(uuid: string = ''){
+    return [
+      environment.apiBaseUrl,
+      this.dataSources[environment.dataSource],
+      uuid
+    ].filter(Boolean).join('/') + this.dataSourceFormats[environment.dataSource];
   }
 
-  updateDeviceUrl(uuid: string){
-    return this.url() + '/' + uuid + '.json';
-  }
-
-  devicesUrl(){
-    return this.url() + '.json';
+  createDevice(device: Device): Observable<Device> {
+    return this.http.put<Device>(this.url(device.uuid), device, this.httpOptions).pipe(
+      shareReplay(),
+      retryWhen(errors => {
+        return errors
+                .pipe(
+                    delayWhen(() => timer(1000)),
+                    tap(() => console.log('retrying...'))
+                );
+      }),
+      catchError(this.handleError<Device>('updateDevice'))
+    );
   }
 
   updateDevice(device: Device): Observable<Device> {
-    device.sync_at = null;
-    return this.http.put<Device>(this.updateDeviceUrl(device.uuid), device, this.httpOptions).pipe(
+    return this.http.put<Device>(this.url(device.uuid), device, this.httpOptions).pipe(
       catchError(this.handleError<Device>('updateDevice'))
     );
   }
 
   getDevices (): Observable<Device[]> {
-    return this.http.get<Device[]>(this.devicesUrl())
+    return this.http.get<Device[]>(this.url())
       .pipe(
         catchError(this.handleError<Device[]>('getDevices', []))
       );
