@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DeviceConnectService } from '../device-connect.service';
 
 /* tslint:disable no-any */
 declare var WifiWizard2: any;
@@ -9,10 +10,7 @@ declare var WifiWizard2: any;
 @Injectable({
   providedIn: 'root'
 })
-export class RemoteDeviceConnectService {
-
-  constructor() { }
-
+export class RemoteDeviceConnectService extends DeviceConnectService {
   connect(ssid: string, password: string): Observable<boolean> {
     return from(WifiWizard2.connect(ssid, true, password)).pipe(
       map(connectionStatus => {

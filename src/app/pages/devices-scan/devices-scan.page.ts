@@ -40,7 +40,7 @@ export class DevicesScanPage implements OnInit {
 
   scanWifi(): void {
     this.guiHelper.wrapLoading(
-      this.wifiDeviceService.scan()
+      this.wifiDeviceService.scanAll()
     ).subscribe(wifiDevices => this.wifiDevices = wifiDevices);
   }
 

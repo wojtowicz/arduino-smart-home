@@ -5,46 +5,31 @@ import { toArray, filter } from 'rxjs/operators';
 
 import { WifiDevice } from '../models/wifi_device';
 
-import { LocalWifiDeviceSourceService } from '../services/sources/local-wifi-device-source.service';
-import { RemoteWifiDeviceSourceService } from '../services/sources/remote-wifi-device-source.service';
 import { WifiNetworkService } from './device/wifi-network.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WifiDeviceService {
+export abstract class WifiDeviceService {
+  constructor(public wifiNetworkService: WifiNetworkService) { }
 
-  /* tslint:disable typedef */
-  dataSources = {
-    local: this.localWifiDeviceSourceService,
-    remote: this.remoteWifiDeviceSourceService,
-    localhost: this.localWifiDeviceSourceService
-  };
-  /* tslint:enable typedef */
+  abstract listenOnNetworkConnect(): Observable<void>;
+  abstract scan(): Observable<WifiDevice>;
 
-  constructor(
-    private localWifiDeviceSourceService: LocalWifiDeviceSourceService,
-    private remoteWifiDeviceSourceService: RemoteWifiDeviceSourceService,
-    private wifiNetworkService: WifiNetworkService
-  ) { }
-
-  getDataSourceDevice(): LocalWifiDeviceSourceService | RemoteWifiDeviceSourceService {
-    return this.dataSources[environment.dataSource];
-  }
-
-  scan(): Observable<WifiDevice[]> {
-    let wifiDeviceObservable: Observable<WifiDevice>;
-
-    wifiDeviceObservable = this.getDataSourceDevice().scan();
-    return wifiDeviceObservable.pipe(
+  scanAll(): Observable<WifiDevice[]> {
+    return this.scan().pipe(
       filter(wifiDevice => wifiDevice.SSID.includes('SmartHome')),
       toArray()
     );
   }
 
+  filterFunction(wifiDevice: WifiDevice): boolean {
+    return wifiDevice.SSID.includes('SmartHome');
+  }
+
   saveWifi(ssid: string, password: string): Observable<void> {
     return new Observable(subscriber => {
-      this.getDataSourceDevice().listenOnNetworkConnect()
+      this.listenOnNetworkConnect()
       .subscribe(() => {
         subscriber.next();
         subscriber.complete();

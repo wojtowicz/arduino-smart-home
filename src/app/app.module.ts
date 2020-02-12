@@ -19,6 +19,12 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './services/in-memory-data.service';
+import { DeviceConnectService } from './services/device-connect.service';
+import { DeviceConnectFactory } from './factories/device-connect.factory';
+import { WifiDeviceFactory } from './factories/wifi-device.factory';
+import { environment } from 'src/environments/environment';
+import { WifiDeviceService } from './services/wifi-device.service';
+import { WifiNetworkService } from './services/device/wifi-network.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +41,10 @@ import { InMemoryDataService } from './services/in-memory-data.service';
     SplashScreen,
     Camera,
     Network,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: DeviceConnectService, useFactory: DeviceConnectFactory, deps: ['DATA_SOURCE'] },
+    { provide: WifiDeviceService, useFactory: WifiDeviceFactory, deps: ['DATA_SOURCE', Network, WifiNetworkService] },
+    { provide: 'DATA_SOURCE', useValue: environment.dataSource }
   ],
   bootstrap: [AppComponent]
 })
