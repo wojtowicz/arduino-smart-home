@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+/* tslint:disable no-any */
 declare var WifiWizard2: any;
+/* tslint:enable no-any */
 
 @Injectable({
   providedIn: 'root'

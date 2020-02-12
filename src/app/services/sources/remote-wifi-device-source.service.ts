@@ -5,7 +5,9 @@ import { Network } from '@ionic-native/network/ngx';
 import { from, Observable } from 'rxjs';
 import { mergeAll } from 'rxjs/operators';
 
+/* tslint:disable no-any */
 declare var WifiWizard2: any;
+/* tslint:enable no-any */
 
 @Injectable({
   providedIn: 'root'

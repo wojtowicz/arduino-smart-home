@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModalController, LoadingController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 
 import { Device } from '../models/device';
 
@@ -20,11 +20,9 @@ export class ConnectWifiModalPage {
   @Input() uuid: string;
   @Input() deviceName: string;
   password: string;
-  loading: any;
 
   constructor(
     public modalController: ModalController,
-    public loadingController: LoadingController,
     private deviceService: DeviceService,
     private wifiDeviceService: WifiDeviceService,
     private guiHelper: GuiHelper

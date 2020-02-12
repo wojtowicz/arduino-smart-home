@@ -1,11 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
-import { environment } from 'src/environments/environment';
-
 
 import { DeviceConnectService } from '../../../services/device-connect.service';
 
+import { GuiHelper } from '../../../helpers/gui.helper';
+
+/* tslint:disable no-any */
 declare var WifiWizard2: any;
+/* tslint:enable no-any */
 
 @Component({
   selector: 'app-device-connect-modal',
@@ -16,38 +18,28 @@ export class DeviceConnectModalPage implements OnInit {
 
   @Input() ssid: string;
   password: string;
-  loading: any;
 
   constructor(
     public modalController: ModalController,
     public loadingController: LoadingController,
-    private deviceConnectService: DeviceConnectService
+    private deviceConnectService: DeviceConnectService,
+    private guiHelper: GuiHelper
   ) { }
 
   ngOnInit() {
   }
 
   dismiss() {
-    this.modalController.dismiss({connected: false});
-  }
-
-  async presentLoading() {
-    this.loading = await this.loadingController.create({
-      message: 'Please wait...'
-    });
-    await this.loading.present();
-
-    return this.loading;
+    this.closeModal(false);
   }
 
   async connect() {
-    this.loading = this.presentLoading();
-    this.deviceConnectService.connect(this.ssid, this.password)
-                             .subscribe(status => this.closeModal(status));
+    this.guiHelper.wrapLoading(
+      this.deviceConnectService.connect(this.ssid, this.password)
+    ).subscribe((status) => this.closeModal(status));
   }
 
   async closeModal(status: boolean) {
-    (await this.loading).dismiss();
     this.modalController.dismiss({
       connected: status
     });

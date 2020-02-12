@@ -26,7 +26,7 @@ export class InMemoryDataService implements InMemoryDbService {
     return {devices, wifiNetworks};
   }
 
-  genId<T extends { id: any }>(collection: T[], collectionName: string): any {
+  genId<T extends { id: number }>(collection: T[], collectionName: string): number {
     if (collectionName === 'devices') {
       return collection.length > 0 ? Math.max(...collection.map(item => item.id)) + 1 : 11;
     } else if (collection) {

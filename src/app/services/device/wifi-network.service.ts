@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, timer } from 'rxjs';
-import { catchError, shareReplay, retryWhen, delayWhen, tap } from 'rxjs/operators';
+import { catchError, shareReplay, retryWhen, delayWhen, tap, map, toArray } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+
+import { WifiNetwork, WifiNetworkJson, WifiNetworkAdapter } from '../../models/wifi_network';
+import { DeviceInfo, DeviceInfoJson, DeviceInfoAdapter } from 'src/app/models/device-info';
 
 @Injectable({
   providedIn: 'root'
@@ -36,18 +39,19 @@ export class WifiNetworkService {
 
   getWifiNetworks() {
     return this.http.get(this.url(), this.httpOptions).pipe(
-      shareReplay(5),
+      shareReplay(),
       retryWhen(errors => {
         return errors
                 .pipe(
                     delayWhen(() => timer(1000)),
                     tap(() => console.log('retrying...'))
                 );
-      })
+      }),
+      map((data: WifiNetworkJson[]) => data.map(item => WifiNetworkAdapter(item)))
     );
   }
 
-  getInfo() {
+  getInfo(): Observable<DeviceInfo> {
     return this.http.get(this.infoUrl(), this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
@@ -56,11 +60,12 @@ export class WifiNetworkService {
                     delayWhen(() => timer(1000)),
                     tap(() => console.log('retrying...'))
                 );
-      })
+      }),
+      map((json: DeviceInfoJson) => DeviceInfoAdapter(json)),
     );
   }
 
-  connect(ssid: string, password: string): Observable<any> {
+  connect(ssid: string, password: string) {
     return this.http.post(this.url() + '/connect', {ssid, password}, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
@@ -70,11 +75,11 @@ export class WifiNetworkService {
                     tap(() => console.log('retrying...'))
                 );
       }),
-      catchError(this.handleError<any>('wifi_networks/connect'))
+      catchError(this.handleError('wifi_networks/connect'))
     );
   }
 
-  disconnect(): Observable<any> {
+  disconnect() {
     return this.http.post(this.url() + '/disconnect', {}, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
@@ -84,12 +89,12 @@ export class WifiNetworkService {
                     tap(() => console.log('retrying...'))
                 );
       }),
-      catchError(this.handleError<any>('wifi_networks/disconnect'))
+      catchError(this.handleError('wifi_networks/disconnect'))
     );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: Error | HttpErrorResponse): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead

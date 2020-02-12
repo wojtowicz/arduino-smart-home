@@ -8,6 +8,10 @@ import { of, Observable, forkJoin } from 'rxjs';
 
 import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-modal.page';
 
+import { WifiNetwork } from '../../models/wifi_network';
+import { DeviceInfo } from '../../models/device-info';
+import { HttpErrorResponse } from '@angular/common/http';
+
 @Component({
   selector: 'app-wifi-networks',
   templateUrl: './wifi-networks.page.html',
@@ -15,8 +19,8 @@ import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-moda
 })
 export class WifiNetworksPage implements OnInit {
 
-  wifiNetworks: any = [];
-  info: any = {};
+  wifiNetworks: Array<WifiNetwork> = [];
+  info: DeviceInfo;
   loading = false;
   @Input() ssid: string;
   deviceName: string;
@@ -39,10 +43,10 @@ export class WifiNetworksPage implements OnInit {
     this.loading = true;
     forkJoin(
       this.wifiNetworkService.getWifiNetworks().pipe(
-        catchError(this.handleError<any>('wifi_networks/connect'))
+        catchError(this.handleError<WifiNetwork[]>('wifi_networks/connect'))
       ),
       this.wifiNetworkService.getInfo().pipe(
-        catchError(this.handleError<any>('wifi_networks/info'))
+        catchError(this.handleError<DeviceInfo>('wifi_networks/info'))
       )
     )
     .subscribe(([wifiNetworks, info]) => {
@@ -57,7 +61,7 @@ export class WifiNetworksPage implements OnInit {
       component: ConnectWifiModalPage,
       componentProps: {
         ssid,
-        uuid: this.info.chip_id,
+        uuid: this.info.chipId,
         deviceName: this.deviceName
       }
     });
@@ -72,7 +76,7 @@ export class WifiNetworksPage implements OnInit {
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: Error | HttpErrorResponse): Observable<T> => {
       console.error(error);
       this.router.navigate(['/devices/scan']);
 

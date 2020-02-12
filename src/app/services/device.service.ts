@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, timer } from 'rxjs';
-import { catchError, shareReplay, retryWhen, delayWhen, tap } from 'rxjs/operators';
+import { catchError, shareReplay, retryWhen, delayWhen, tap, map } from 'rxjs/operators';
 
-import { Device } from '../models/device';
+import { Device, DeviceJson, DeviceAdapter } from '../models/device';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -37,7 +37,7 @@ export class DeviceService {
   }
 
   createDevice(device: Device): Observable<Device> {
-    return this.http.put<Device>(this.url(device.uuid), device, this.httpOptions).pipe(
+    return this.http.put<DeviceJson>(this.url(device.uuid), device, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -46,6 +46,7 @@ export class DeviceService {
                     tap(() => console.log('retrying...'))
                 );
       }),
+      map((json: DeviceJson) => DeviceAdapter(json)),
       catchError(this.handleError<Device>('updateDevice'))
     );
   }
@@ -57,14 +58,15 @@ export class DeviceService {
   }
 
   getDevices(): Observable<Device[]> {
-    return this.http.get<Device[]>(this.url())
+    return this.http.get<DeviceJson[]>(this.url())
       .pipe(
-        catchError(this.handleError<Device[]>('getDevices', []))
+        catchError(this.handleError<Device[]>('getDevices', [])),
+        map((data: DeviceJson[]) => data.map(item => DeviceAdapter(item)))
       );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: Error | HttpErrorResponse): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
