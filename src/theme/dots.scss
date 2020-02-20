@@ -1,4 +1,4 @@
-:root .append-moving-dots:after {
+.append-moving-dots:after {
   content: ' .';
   animation: dots 3s steps(1, end) infinite;
 }

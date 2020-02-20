@@ -14,6 +14,11 @@ const routes: Routes = [
     path: 'devices/:name/wifi_networks',
     loadChildren: () => import('./pages/wifi-networks/wifi-networks.module').then( m => m.WifiNetworksPageModule)
   },
+  {
+    path: 'devices/:uuid',
+    loadChildren: () => import('./pages/device/device.module').then( m => m.DevicePageModule)
+  },
+
 
 
 

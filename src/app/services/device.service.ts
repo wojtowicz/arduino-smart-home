@@ -67,6 +67,13 @@ export class DeviceService {
       );
   }
 
+  getDevice(uuid: string): Observable<Device> {
+    return this.http.get<DeviceJson>(this.url(uuid), this.httpOptions).pipe(
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
+      catchError(this.handleError<Device>('getDevice')),
+    );
+  }
+
   private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
     return (error: Error | HttpErrorResponse): Observable<T> => {
 

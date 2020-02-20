@@ -5,6 +5,11 @@ export class Device {
     public uuid: string,
     public status: string,
     public syncAt: string) {  }
+
+    isConfiguring(): boolean {
+      return this.status.includes('configuring');
+    }
+
 }
 
 export interface DeviceJson {

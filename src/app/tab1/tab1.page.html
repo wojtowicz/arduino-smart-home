@@ -17,7 +17,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list lines="none">
-    <ion-item *ngFor="let device of devices" lines="full">
+    <ion-item *ngFor="let device of devices" lines="full" (click)="onClickDevice(device.uuid)">
       <ion-label>
         <h2>{{device.name}}</h2>
         <p [class.append-moving-dots]="device.status === 'configuring'">

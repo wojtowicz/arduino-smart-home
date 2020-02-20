@@ -33,6 +33,11 @@ export class Tab1Page {
     this.router.navigate(['/devices/scan']);
   }
 
+  onClickDevice(uuid: string): void {
+    this.unsubscribeConfiguringDevices();
+    this.router.navigate(['/devices', uuid]);
+  }
+
   subscribeConfiguringDevices(): void {
     this.configuringDevices = interval(3000)
       .subscribe(i => this.checkConfiguringDevice(i));
@@ -44,7 +49,7 @@ export class Tab1Page {
 
   checkConfiguringDevice(i: number): void {
     const configuringDevices = this.devices.filter(device => {
-      return device.status.includes('configuring');
+      return device.isConfiguring();
     });
     if (configuringDevices.length > 0) {
       this.getDevices(true);
@@ -63,7 +68,7 @@ export class Tab1Page {
   doRefresh(event: CustomEvent): void {
     this.deviceService.getDevices()
       .pipe(
-        tap(devices => event.target.complete())
+        tap(devices => event.detail.complete())
       )
     .subscribe(devices => this.devices = devices);
   }
