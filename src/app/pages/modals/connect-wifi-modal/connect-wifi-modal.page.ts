@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
-import { Device } from '../models/device';
+import { Device } from '../../../models/device';
 
-import { DeviceService } from '../services/device.service';
-import { WifiDeviceService } from '../services/wifi-device.service';
+import { DeviceService } from '../../../services/device.service';
+import { WifiDeviceService } from '../../../services/wifi-device.service';
 
-import { GuiHelper } from '../helpers/gui.helper';
+import { GuiHelper } from '../../../helpers/gui.helper';
 import { Observable } from 'rxjs';
 
 @Component({

@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { WifiNetworksPageRoutingModule } from './wifi-networks-routing.module';
 
 import { WifiNetworksPage } from './wifi-networks.page';
-import { ConnectWifiModalPageModule } from '../../connect-wifi-modal/connect-wifi-modal.module';
+import { ConnectWifiModalPageModule } from '../modals/connect-wifi-modal/connect-wifi-modal.module';
 
 @NgModule({
   imports: [

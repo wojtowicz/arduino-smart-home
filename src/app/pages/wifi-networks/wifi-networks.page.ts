@@ -6,7 +6,7 @@ import { WifiNetworkService } from '../../services/device/wifi-network.service';
 import { catchError } from 'rxjs/operators';
 import { of, Observable, forkJoin } from 'rxjs';
 
-import { ConnectWifiModalPage } from '../../connect-wifi-modal/connect-wifi-modal.page';
+import { ConnectWifiModalPage } from '../modals/connect-wifi-modal/connect-wifi-modal.page';
 
 import { WifiNetwork } from '../../models/wifi_network';
 import { DeviceInfo } from '../../models/device-info';
