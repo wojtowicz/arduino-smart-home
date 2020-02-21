@@ -26,6 +26,9 @@ import { environment } from 'src/environments/environment';
 import { WifiDeviceService } from './services/wifi-device.service';
 import { WifiNetworkService } from './services/device/wifi-network.service';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
@@ -34,13 +37,15 @@ import { WifiNetworkService } from './services/device/wifi-network.service';
       InMemoryDataService, {
         dataEncapsulation: false, delay: 1500, passThruUnknownUrl: true
       }
-    )
+    ),
+    LeafletModule.forRoot()
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Camera,
     Network,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: DeviceConnectService, useFactory: DeviceConnectFactory, deps: ['DATA_SOURCE'] },
     { provide: WifiDeviceService, useFactory: WifiDeviceFactory, deps: ['DATA_SOURCE', Network, WifiNetworkService] },

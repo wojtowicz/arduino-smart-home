@@ -4,10 +4,25 @@ export class Device {
     public name: string,
     public uuid: string,
     public status: string,
+    public lat: number,
+    public lng: number,
+    public coordsLabel: string,
+    public airlyApiKey: string,
     public syncAt: string) {  }
 
     isConfiguring(): boolean {
       return this.status.includes('configuring');
+    }
+
+    isCoordsSet(): boolean {
+      return !!this.lat && !!this.lng;
+    }
+
+    airlyApiKeyPreview(): string {
+      if(this.airlyApiKey)
+        return `************${this.airlyApiKey.substr(this.airlyApiKey.length - 3)}`;
+      else
+        return '';
     }
 
 }
@@ -17,7 +32,23 @@ export interface DeviceJson {
   name: string;
   uuid: string;
   status: string;
+  lat: number;
+  lng: number;
+  coords_label: string;
+  airly_api_key: string;
   sync_at: string;
+}
+
+export interface CreateDeviceJson {
+  name: string;
+}
+
+export interface UpdateDeviceJson {
+  name: string;
+  lat: number;
+  lng: number;
+  coords_label: string;
+  airly_api_key: string;
 }
 
 export function DeviceJsonToDevice(json: DeviceJson): Device {
@@ -26,16 +57,26 @@ export function DeviceJsonToDevice(json: DeviceJson): Device {
     json.name,
     json.uuid,
     json.status,
-    json.sync_at
+    json.lat,
+    json.lng,
+    json.coords_label,
+    json.airly_api_key,
+    json.sync_at,
   );
 }
 
-export function DeviceToDeviceJson(device: Device): DeviceJson {
+export function CreateDeviceToDeviceJson(device: Device): CreateDeviceJson {
   return {
-    id: device.id,
     name: device.name,
-    uuid: device.uuid,
-    status: device.status,
-    sync_at: device.syncAt
+  };
+}
+
+export function UpdateDeviceToDeviceJson(device: Device): UpdateDeviceJson {
+  return {
+    name: device.name,
+    lat: device.lat,
+    lng: device.lng,
+    coords_label: device.coordsLabel,
+    airly_api_key: device.airlyApiKey
   };
 }

@@ -76,7 +76,8 @@
       },
       "cordova-sqlite-storage": {},
       "wifiwizard2": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-geolocation": {}
     },
     "platforms": [
       "android"

@@ -20,7 +20,7 @@
     <ion-item *ngFor="let device of devices" lines="full" (click)="onClickDevice(device.uuid)">
       <ion-label>
         <h2>{{device.name}}</h2>
-        <p [class.append-moving-dots]="device.status === 'configuring'">
+        <p [class.append-moving-dots]="device.isConfiguring()">
           {{device.status | titlecase }}
         </p>
       </ion-label>

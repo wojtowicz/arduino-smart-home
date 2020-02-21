@@ -8,12 +8,15 @@ import { DevicePageRoutingModule } from './device-routing.module';
 
 import { DevicePage } from './device.page';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DevicePageRoutingModule
+    DevicePageRoutingModule,
+    LeafletModule
   ],
   declarations: [DevicePage]
 })

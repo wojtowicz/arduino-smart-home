@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of, timer } from 'rxjs';
 import { catchError, shareReplay, retryWhen, delayWhen, tap, map } from 'rxjs/operators';
 
-import { Device, DeviceJson, DeviceJsonToDevice, DeviceToDeviceJson } from '../models/device';
+import { Device, DeviceJson, DeviceJsonToDevice, CreateDeviceJson, UpdateDeviceJson } from '../models/device';
 import { environment } from 'src/environments/environment';
 import { IDataSource } from '../interfaces/data-source.interface';
 import { IHttpOptions } from '../interfaces/http-options.interface';
@@ -38,8 +38,8 @@ export class DeviceService {
     ].filter(Boolean).join('/') + this.dataSourceFormats[environment.dataSource];
   }
 
-  createDevice(device: Device): Observable<Device> {
-    return this.http.put<DeviceJson>(this.url(device.uuid), DeviceToDeviceJson(device), this.httpOptions).pipe(
+  createDevice(uuid: string, deviceJson: CreateDeviceJson): Observable<Device> {
+    return this.http.put<DeviceJson>(this.url(uuid), deviceJson, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -49,13 +49,14 @@ export class DeviceService {
                 );
       }),
       map((json: DeviceJson) => DeviceJsonToDevice(json)),
-      catchError(this.handleError<Device>('updateDevice'))
+      catchError(this.handleError<Device>('createDevice'))
     );
   }
 
-  updateDevice(device: Device): Observable<Device> {
-    return this.http.put<Device>(this.url(device.uuid), device, this.httpOptions).pipe(
-      catchError(this.handleError<Device>('updateDevice'))
+  updateDevice(uuid: string, deviceJson: UpdateDeviceJson): Observable<Device> {
+    return this.http.put<DeviceJson>(this.url(uuid), deviceJson, this.httpOptions).pipe(
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
+      catchError(this.handleError<Device>('updateDevice')),
     );
   }
 

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
-import { Device } from '../../../models/device';
+import { Device, CreateDeviceToDeviceJson } from '../../../models/device';
 
 import { DeviceService } from '../../../services/device.service';
 import { WifiDeviceService } from '../../../services/wifi-device.service';
@@ -51,13 +51,8 @@ export class ConnectWifiModalPage {
   }
 
   addDevice(): Observable<Device> {
-    return this.deviceService.createDevice(
-      {
-        name: this.deviceName,
-        uuid: this.uuid,
-        status: 'configuring',
-        syncAt: null
-      } as Device);
+    const device = { name: this.deviceName } as Device;
+    return this.deviceService.createDevice(this.uuid, CreateDeviceToDeviceJson(device));
   }
 
   async closeModal(status: boolean): Promise<void> {
