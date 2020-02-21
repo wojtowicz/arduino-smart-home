@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Wifi Networks</ion-title>
+  </ion-toolbar>
+  <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+      <ion-item *ngFor="let wifiNetwork of wifiNetworks" (click)="openConnectWifiModalPage(wifiNetwork.ssid)">
+          {{wifiNetwork.ssid}} ({{wifiNetwork.encryptionType}}, {{wifiNetwork.signalQuality}}%)
+      </ion-item>
+    </ion-list>
+</ion-content>

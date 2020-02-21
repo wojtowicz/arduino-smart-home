@@ -75,7 +75,9 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-sqlite-storage": {},
-      "wifiwizard2": {}
+      "wifiwizard2": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-geolocation": {}
     },
     "platforms": [
       "android"

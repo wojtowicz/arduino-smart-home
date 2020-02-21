@@ -5,10 +5,22 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-  },  {
-    path: 'connect-wifi-modal',
-    loadChildren: () => import('./connect-wifi-modal/connect-wifi-modal.module').then( m => m.ConnectWifiModalPageModule)
-  }
+  },
+  {
+    path: 'devices/scan',
+    loadChildren: () => import('./pages/devices-scan/devices-scan.module').then( m => m.DevicesScanPageModule)
+  },
+  {
+    path: 'devices/:name/wifi_networks',
+    loadChildren: () => import('./pages/wifi-networks/wifi-networks.module').then( m => m.WifiNetworksPageModule)
+  },
+  {
+    path: 'devices/:uuid',
+    loadChildren: () => import('./pages/device/device.module').then( m => m.DevicePageModule)
+  },
+
+
+
 
 ];
 @NgModule({

@@ -26,6 +26,11 @@
                 "output": "assets"
               },
               {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images",
+                "output": "assets/"
+              },
+              {
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
@@ -37,16 +42,27 @@
               },
               {
                 "input": "src/global.scss"
+              },
+              {
+                "input": "node_modules/leaflet/dist/leaflet.css"
               }
             ],
             "scripts": []
           },
           "configurations": {
-            "local": {
+            "remote": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.local.ts"
+                  "with": "src/environments/environment.remote.ts"
+                }
+              ]
+            },
+            "localhost": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.localhost.ts"
                 }
               ]
             },
@@ -85,8 +101,11 @@
             "browserTarget": "app:build"
           },
           "configurations": {
-            "local": {
-              "browserTarget": "app:build:local"
+            "remote": {
+              "browserTarget": "app:build:remote"
+            },
+            "localhost": {
+              "browserTarget": "app:build:localhost"
             },
             "production": {
               "browserTarget": "app:build:production"
@@ -152,6 +171,9 @@
             "production": {
               "devServerTarget": "app:serve:production"
             },
+            "remote": {
+              "devServerTarget": "app:serve:remote"
+            },
             "ci": {
               "devServerTarget": "app:serve:ci"
             }
@@ -165,6 +187,9 @@
           "configurations": {
             "production": {
               "browserTarget": "app:build:production"
+            },
+            "remote": {
+              "browserTarget": "app:build:remote"
             }
           }
         },
@@ -178,6 +203,10 @@
             "production": {
               "cordovaBuildTarget": "app:ionic-cordova-build:production",
               "devServerTarget": "app:serve:production"
+            },
+            "remote": {
+              "cordovaBuildTarget": "app:ionic-cordova-build:remote",
+              "devServerTarget": "app:serve:remote"
             }
           }
         }

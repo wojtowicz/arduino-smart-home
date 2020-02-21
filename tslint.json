@@ -4,6 +4,7 @@
     "codelyzer"
   ],
   "rules": {
+    "no-any": true,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -61,6 +62,14 @@
       "single"
     ],
     "trailing-comma": false,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ],
     "no-output-on-prefix": true,
     "no-inputs-metadata-property": true,
     "no-host-metadata-property": true,

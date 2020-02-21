@@ -1,43 +1,82 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, timer } from 'rxjs';
+import { catchError, shareReplay, retryWhen, delayWhen, tap, map } from 'rxjs/operators';
 
-import { Device } from '../models/device';
-// import { DEVICES } from '../mocks/mock-devices';
+import { Device, DeviceJson, DeviceJsonToDevice, CreateDeviceJson, UpdateDeviceJson } from '../models/device';
+import { environment } from 'src/environments/environment';
+import { IDataSource } from '../interfaces/data-source.interface';
+import { IHttpOptions } from '../interfaces/http-options.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
-  private url = 'http://localhost:3000';
-  private devicesUrl = 'api/devices';
+  dataSources: IDataSource = {
+    local: 'api/devices',
+    remote: 'devices',
+    localhost: 'devices',
+  };
 
-  httpOptions = {
+  dataSourceFormats: IDataSource = {
+    local: '',
+    remote: '.json',
+    localhost: '.json',
+  };
+
+  httpOptions: IHttpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
   constructor(private http: HttpClient) { }
 
-  // getDevices (): Observable<any> {
-  //   return this.http.get(this.url + "/devices", this.httpOptions).pipe(
-  //     catchError(this.handleError<any>('getDevices'))
-  //   );
-  // }
+  url(uuid: string = ''): string {
+    return [
+      environment.apiBaseUrl,
+      this.dataSources[environment.dataSource],
+      uuid
+    ].filter(Boolean).join('/') + this.dataSourceFormats[environment.dataSource];
+  }
 
-  // getDevices(): Observable<Device[]> {
-  //   return of(DEVICES);
-  // }
+  createDevice(uuid: string, deviceJson: CreateDeviceJson): Observable<Device> {
+    return this.http.put<DeviceJson>(this.url(uuid), deviceJson, this.httpOptions).pipe(
+      shareReplay(),
+      retryWhen(errors => {
+        return errors
+                .pipe(
+                    delayWhen(() => timer(1000)),
+                    tap(() => console.log('retrying...'))
+                );
+      }),
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
+      catchError(this.handleError<Device>('createDevice'))
+    );
+  }
 
-  getDevices (): Observable<Device[]> {
-    return this.http.get<Device[]>(this.devicesUrl)
+  updateDevice(uuid: string, deviceJson: UpdateDeviceJson): Observable<Device> {
+    return this.http.put<DeviceJson>(this.url(uuid), deviceJson, this.httpOptions).pipe(
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
+      catchError(this.handleError<Device>('updateDevice')),
+    );
+  }
+
+  getDevices(): Observable<Device[]> {
+    return this.http.get<DeviceJson[]>(this.url())
       .pipe(
-        catchError(this.handleError<Device[]>('getDevices', []))
+        catchError(this.handleError<Device[]>('getDevices', [])),
+        map((data: DeviceJson[]) => data.map(item => DeviceJsonToDevice(item)))
       );
   }
 
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+  getDevice(uuid: string): Observable<Device> {
+    return this.http.get<DeviceJson>(this.url(uuid), this.httpOptions).pipe(
+      map((json: DeviceJson) => DeviceJsonToDevice(json)),
+      catchError(this.handleError<Device>('getDevice')),
+    );
+  }
+
+  private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
+    return (error: Error | HttpErrorResponse): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead

@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Device } from '../models/device';
 import { DeviceService } from '../services/device.service';
-import { GuiHelper } from '../helpers/gui.helper';
+import { tap } from 'rxjs/operators';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -12,19 +14,63 @@ import { GuiHelper } from '../helpers/gui.helper';
 export class Tab1Page {
 
   devices: Device[];
+  loading: boolean;
+  configuringDevices: Subscription;
 
   constructor(
-    private deviceService: DeviceService, private guiHelper: GuiHelper
-  ) {}
-
-  ngOnInit() {
-    this.getDevices();
+    private deviceService: DeviceService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {
+    route.params.subscribe(val => {
+      this.getDevices(true);
+      this.subscribeConfiguringDevices();
+    });
   }
 
-  getDevices(): void {
-    this.guiHelper.wrapLoading(
-      this.deviceService.getDevices()
-    ).subscribe(devices => this.devices = devices);
+  onAddDevice(): void {
+    this.unsubscribeConfiguringDevices();
+    this.router.navigate(['/devices/scan']);
+  }
+
+  onClickDevice(uuid: string): void {
+    this.unsubscribeConfiguringDevices();
+    this.router.navigate(['/devices', uuid]);
+  }
+
+  subscribeConfiguringDevices(): void {
+    this.configuringDevices = interval(3000)
+      .subscribe(i => this.checkConfiguringDevice(i));
+  }
+
+  unsubscribeConfiguringDevices(): void {
+    this.configuringDevices.unsubscribe();
+  }
+
+  checkConfiguringDevice(i: number): void {
+    const configuringDevices = this.devices.filter(device => {
+      return device.isConfiguring();
+    });
+    if (configuringDevices.length > 0) {
+      this.getDevices(true);
+    }
+  }
+
+  getDevices(loading: boolean): void {
+    this.loading = loading;
+    this.deviceService.getDevices()
+      .pipe(
+          tap(devices => this.loading = false)
+        )
+      .subscribe(devices => this.devices = devices);
+  }
+
+  doRefresh(event: CustomEvent): void {
+    this.deviceService.getDevices()
+      .pipe(
+        tap(devices => event.detail.complete())
+      )
+    .subscribe(devices => this.devices = devices);
   }
 
 }

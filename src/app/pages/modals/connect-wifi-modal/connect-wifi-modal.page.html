@@ -1,0 +1,29 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Modal Content</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <ion-item>
+    {{deviceName}}
+  </ion-item>
+  <ion-item>
+    {{uuid}}
+  </ion-item>
+  <ion-item>
+    <ion-input placeholder="Enter SSID" value="{{ssid}}"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-button
+      color="primary"
+      expand="block"
+      (click)="saveWifi()">Connect
+    </ion-button>
+  </ion-item>
+</ion-content>

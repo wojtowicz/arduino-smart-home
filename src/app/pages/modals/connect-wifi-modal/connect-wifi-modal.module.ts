@@ -15,6 +15,9 @@ import { ConnectWifiModalPage } from './connect-wifi-modal.page';
     IonicModule,
     ConnectWifiModalPageRoutingModule
   ],
-  declarations: [ConnectWifiModalPage]
+  declarations: [ConnectWifiModalPage],
+  entryComponents: [
+    ConnectWifiModalPage
+  ]
 })
 export class ConnectWifiModalPageModule {}

@@ -4,15 +4,26 @@
       Devices
     </ion-title>
   </ion-toolbar>
+  <ion-fab vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onAddDevice()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-header>
 
 <ion-content>
-    <ion-list lines="none">
-      <ion-item *ngFor="let device of devices">
-        <ion-label>
-          <h2>{{device.name}}</h2>
-          <p>{{device.status | titlecase }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+  <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-list lines="none">
+    <ion-item *ngFor="let device of devices" lines="full" (click)="onClickDevice(device.uuid)">
+      <ion-label>
+        <h2>{{device.name}}</h2>
+        <p [class.append-moving-dots]="device.isConfiguring()">
+          {{device.status | titlecase }}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

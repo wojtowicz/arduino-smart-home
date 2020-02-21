@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Device</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
+  <div *ngIf="device">
+    <ion-card>
+      <!-- <ion-item>
+        <ion-button fill="outline" slot="end" (click)="presentNamePrompt()">Edit</ion-button>
+      </ion-item> -->
+      <ion-fab vertical="top" horizontal="end" slot="fixed">
+        <ion-item>
+          <ion-button fill="outline" slot="end" (click)="presentNamePrompt()">Edit</ion-button>
+        </ion-item>
+      </ion-fab>
+      <ion-card-header>
+        <ion-card-subtitle>Pollution</ion-card-subtitle>
+        <ion-card-title>{{ device.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content [class.append-moving-dots]="device.isConfiguring()">
+        {{device.status | titlecase }}
+      </ion-card-content>
+
+    </ion-card>
+
+    <ion-card>
+      <ion-item *ngIf="device.coordsLabel">
+        {{ device.coordsLabel }}
+      </ion-item>
+      <ion-item *ngIf="!device.coordsLabel">
+        Set position on map
+      </ion-item>
+
+      <ion-card-content>
+        <div style="height: 300px;"
+            leaflet
+            [leafletOptions]="options"
+            [leafletLayers]="layers"
+            [leafletCenter]="center"
+            [leafletZoom]="zoom"
+            (leafletClick)="onClickMap($event)"
+        >
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-item>
+        <ion-icon name="key" slot="start"></ion-icon>
+        <ion-label position="stacked">Airly api key</ion-label>
+        <ion-input readonly value="{{device.airlyApiKeyPreview()}}"></ion-input>
+        <ion-button fill="outline" slot="end" (click)="presentAirlyPrompt()">Edit</ion-button>
+      </ion-item>
+      <!-- <section>
+        <ion-button expand="block" (click)="save()">Save</ion-button>
+      </section> -->
+    </ion-card>
+  </div>
+</ion-content>

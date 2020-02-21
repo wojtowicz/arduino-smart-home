@@ -1,17 +1,11 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-     List Wifi AP
+     Tab 3
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-
-    <ion-button color="primary" (click)="getNetworks()">Refresh Devices</ion-button>
-    <ion-list>
-        <ion-item *ngFor="let data of getResults()" (click)="openConnectWifiModalPage(data.SSID)">
-            {{data.SSID}}
-        </ion-item>
-      </ion-list>
+<ion-content class="ion-padding">
+  Tab 3 content
 </ion-content>

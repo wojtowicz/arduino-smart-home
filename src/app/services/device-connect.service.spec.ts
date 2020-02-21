@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PhotoService } from './photo.service';
+import { DeviceConnectService } from './device-connect.service';
 
-describe('PhotoService', () => {
+describe('DeviceConnectService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: PhotoService = TestBed.get(PhotoService);
+    const service: DeviceConnectService = TestBed.get(DeviceConnectService);
     expect(service).toBeTruthy();
   });
 });

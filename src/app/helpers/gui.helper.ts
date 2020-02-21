@@ -11,7 +11,7 @@ export class GuiHelper {
   constructor(public loadingController: LoadingController) { }
 
   public wrapLoading<T>(source: Observable<T>): Observable<T> {
-    let loader: any;
+    let loader: HTMLIonLoadingElement;
 
     const obs = from(this.loadingController.create({
         message: 'Please wait ...'
