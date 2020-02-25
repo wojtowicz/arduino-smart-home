@@ -7,7 +7,6 @@ export class Device {
     public lat: number,
     public lng: number,
     public coordsLabel: string,
-    public airlyApiKey: string,
     public wifiSSID: string,
     public localIp: string,
     public syncAt: string) {  }
@@ -19,14 +18,6 @@ export class Device {
     isCoordsSet(): boolean {
       return !!this.lat && !!this.lng;
     }
-
-    airlyApiKeyPreview(): string {
-      if(this.airlyApiKey)
-        return `************${this.airlyApiKey.substr(this.airlyApiKey.length - 3)}`;
-      else
-        return '';
-    }
-
 }
 
 export interface DeviceJson {
@@ -37,7 +28,6 @@ export interface DeviceJson {
   lat: number;
   lng: number;
   coords_label: string;
-  airly_api_key: string;
   wifi_ssid: string;
   local_ip: string;
   sync_at: string;
@@ -46,6 +36,9 @@ export interface DeviceJson {
 export interface CreateDeviceJson {
   name: string;
   wifi_ssid: string;
+  lat: number;
+  lng: number;
+  coords_label: string;
 }
 
 export interface UpdateDeviceJson {
@@ -55,7 +48,6 @@ export interface UpdateDeviceJson {
   lat: number;
   lng: number;
   coords_label: string;
-  airly_api_key: string;
 }
 
 export function DeviceJsonToDevice(json: DeviceJson): Device {
@@ -67,7 +59,6 @@ export function DeviceJsonToDevice(json: DeviceJson): Device {
     json.lat,
     json.lng,
     json.coords_label,
-    json.airly_api_key,
     json.wifi_ssid,
     json.local_ip,
     json.sync_at,
@@ -77,7 +68,10 @@ export function DeviceJsonToDevice(json: DeviceJson): Device {
 export function CreateDeviceToDeviceJson(device: Device): CreateDeviceJson {
   return {
     name: device.name,
-    wifi_ssid: device.wifiSSID
+    wifi_ssid: device.wifiSSID,
+    lat: device.lat,
+    lng: device.lng,
+    coords_label: device.coordsLabel
   };
 }
 
@@ -89,6 +83,5 @@ export function UpdateDeviceToDeviceJson(device: Device): UpdateDeviceJson {
     lat: device.lat,
     lng: device.lng,
     coords_label: device.coordsLabel,
-    airly_api_key: device.airlyApiKey
   };
 }

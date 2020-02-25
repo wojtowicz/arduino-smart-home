@@ -4,21 +4,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GuiHelper } from 'src/app/helpers/gui.helper';
 
 import { Device, UpdateDeviceToDeviceJson } from '../../models/device'
-import { Subscription, interval, Observable, from, forkJoin, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { Subscription, interval, forkJoin } from 'rxjs';
+import { tap, flatMap } from 'rxjs/operators';
 
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { GeolocationService } from '../../services/geolocation.service';
 
 import { tileLayer, latLng, marker, icon } from 'leaflet'
 import { AlertController, ToastController } from '@ionic/angular';
-
-class Coords {
-  constructor(
-    public lat: number,
-    public lng: number) {  }
-}
+import { Coords } from 'src/app/models/coords';
+import { WifiNetworkService } from 'src/app/services/device/wifi-network.service';
 
 @Component({
   selector: 'app-device',
@@ -51,17 +45,18 @@ export class DevicePage implements OnInit {
     private deviceService: DeviceService,
     private route: ActivatedRoute,
     private guiHelper: GuiHelper,
-    private geolocation: Geolocation,
+    private geolocationService: GeolocationService,
     public alertController: AlertController,
     public toastController: ToastController,
     private router: Router,
+    private wifiNetworkService: WifiNetworkService,
   ) {
     route.params.subscribe(val => {
       this.uuid = this.route.snapshot.paramMap.get('uuid');
 
       this.guiHelper.wrapLoading(
         forkJoin(
-          this.getCurrentPosition(),
+          this.geolocationService.getCurrentPosition(),
           this.deviceService.getDevice(this.uuid)
         )
       )
@@ -85,21 +80,6 @@ export class DevicePage implements OnInit {
 
   ngOnDestroy() {
     this.configuring.unsubscribe();
-  }
-
-  getCurrentPosition(): Observable<Coords> {
-    return new Observable(subscriber => {
-      from(this.geolocation.getCurrentPosition()).pipe(
-        catchError(error => {
-          return of({ coords: { latitude: undefined, longitude: undefined } });
-        })
-      )
-      .subscribe(resp => {
-        const coords = new Coords(resp.coords.latitude, resp.coords.longitude)
-        subscriber.next(coords);
-        subscriber.complete();
-      })
-    });
   }
 
   subscribeConfiguringDevices(): void {
@@ -144,53 +124,16 @@ export class DevicePage implements OnInit {
     this.device.lat = event.latlng.lat;
     this.device.lng = event.latlng.lng;
     this.createMarkerFor(this.device.lat, this.device.lng);
-    const provider = new OpenStreetMapProvider();
-    from(provider.search({ query: this.device.lat + ' ' + this.device.lng }))
-      .subscribe((result: { label: string }[]) => {
-        const coordsData = result[0];
-        if(coordsData){
-          this.device.coordsLabel = coordsData.label;
-        }
-        else{
-          this.device.coordsLabel = '';
-        }
-        this.save();
-      });
+    this.geolocationService.getCoordsLabel(this.device.lat, this.device.lng).subscribe((coords) => {
+      this.device.coordsLabel = coords.label;
+      this.save();
+    })
   }
 
   save(): void {
     this.guiHelper.wrapLoading(
       this.deviceService.updateDevice(this.device.uuid, UpdateDeviceToDeviceJson(this.device))
     ).subscribe();
-  }
-
-  async presentAirlyPrompt() {
-    const alert = await this.alertController.create({
-      header: 'Airly api key',
-      inputs: [
-        {
-          name: 'airly_api_key',
-          type: 'text',
-          placeholder: 'Airly api key',
-          value: this.device.airlyApiKey
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary'
-        }, {
-          text: 'Save',
-          handler: (data: { airly_api_key: string }) => {
-            this.device.airlyApiKey = data.airly_api_key;
-            this.save();
-          }
-        }
-      ]
-    });
-
-    await alert.present();
   }
 
   async presentNamePrompt() {
@@ -249,7 +192,10 @@ export class DevicePage implements OnInit {
           text: 'Okay',
           cssClass: 'danger',
           handler: () => {
-            this.deviceService.deleteDevice(this.device.uuid).subscribe(() => {
+            this.guiHelper.wrapLoading(
+              this.wifiNetworkService.disconnect(this.device.localIp)).pipe(
+                flatMap(() => this.deviceService.deleteDevice(this.device.uuid))
+            ).subscribe(()=> {
               this.router.navigate(['/tabs/tab1']);
             });
           }
@@ -259,5 +205,4 @@ export class DevicePage implements OnInit {
 
     await alert.present();
   }
-
 }

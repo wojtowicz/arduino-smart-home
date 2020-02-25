@@ -5,14 +5,14 @@ import { Location } from '@angular/common';
 
 import { WifiNetworkService } from '../../services/device/wifi-network.service';
 import { catchError } from 'rxjs/operators';
-import { of, Observable, forkJoin } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { ConnectWifiModalPage } from '../modals/connect-wifi-modal/connect-wifi-modal.page';
 
 import { WifiNetwork } from '../../models/wifi_network';
 import { DeviceInfo } from '../../models/device-info';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Device, UpdateDeviceToDeviceJson } from 'src/app/models/device';
+import { Device } from 'src/app/models/device';
 import { DeviceService } from 'src/app/services/device.service';
 
 @Component({
@@ -33,7 +33,6 @@ export class WifiNetworksPage implements OnInit {
     private wifiNetworkService: WifiNetworkService,
     private deviceService: DeviceService,
     private router: Router,
-    private location: Location,
     public modalController: ModalController,
     public loadingController: LoadingController,
     private route: ActivatedRoute,
@@ -100,34 +99,6 @@ export class WifiNetworksPage implements OnInit {
     });
 
     return await modal.present();
-  }
-
-  async presentDisconnectDeviceConfirm() {
-    const alert = await this.alertController.create({
-      header: 'Disconnect device!',
-      message: 'Are you sure you want to disconnect device?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-        }, {
-          text: 'Okay',
-          cssClass: 'danger',
-          handler: () => {
-            this.wifiNetworkService.disconnect(this.device.localIp).subscribe(()=> {
-              this.device.localIp = null;
-              this.device.wifiSSID = null;
-              this.deviceService.updateDevice(this.device.uuid, UpdateDeviceToDeviceJson(this.device)).subscribe(() => {
-                this.location.back();
-              })
-            });
-          }
-        }
-      ]
-    })
-
-    await alert.present();
   }
 
   private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
