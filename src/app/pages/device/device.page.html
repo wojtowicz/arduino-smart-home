@@ -63,17 +63,6 @@
         </div>
       </ion-card-content>
     </ion-card>
-
-    <ion-card>
-      <ion-item>
-        <ion-icon name="key" slot="start"></ion-icon>
-        <ion-label position="stacked">Airly api key</ion-label>
-        <ion-input readonly value="{{device.airlyApiKeyPreview()}}"></ion-input>
-        <ion-button fill="outline" slot="end" (click)="presentAirlyPrompt()">Edit</ion-button>
-      </ion-item>
-      <section>
-        <ion-button color="danger" expand="block" (click)="presentDeleteDeviceConfirm()">DELETE DEVICE</ion-button>
-      </section>
-    </ion-card>
+    <ion-button class="delete" color="danger" expand="block" (click)="presentDeleteDeviceConfirm()">DELETE DEVICE</ion-button>
   </div>
 </ion-content>

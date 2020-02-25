@@ -5,9 +5,12 @@ import { Device, CreateDeviceToDeviceJson } from '../../../models/device';
 
 import { DeviceService } from '../../../services/device.service';
 import { WifiDeviceService } from '../../../services/wifi-device.service';
+import { GeolocationService } from '../../../services/geolocation.service';
 
 import { GuiHelper } from '../../../helpers/gui.helper';
 import { Observable } from 'rxjs';
+import { flatMap, tap } from 'rxjs/operators';
+import { Coords } from 'src/app/models/coords';
 
 @Component({
   selector: 'app-connect-wifi-modal',
@@ -26,7 +29,9 @@ export class ConnectWifiModalPage {
     public modalController: ModalController,
     private deviceService: DeviceService,
     private wifiDeviceService: WifiDeviceService,
-    private guiHelper: GuiHelper
+    private geolocationService: GeolocationService,
+    private guiHelper: GuiHelper,
+
   ) { }
 
   dismiss(): void {
@@ -34,6 +39,7 @@ export class ConnectWifiModalPage {
   }
 
   saveWifi(): void {
+    console.log('saveWifi')
     this.guiHelper.wrapLoading(
       this.saveWifiAndAddDevice()
     ).subscribe(() => this.closeModal(true));
@@ -42,17 +48,24 @@ export class ConnectWifiModalPage {
   saveWifiAndAddDevice(): Observable<void> {
     return new Observable(subscriber => {
       this.wifiDeviceService.saveWifi(this.ssid, this.password, this.deviceLocalIp)
-      .subscribe(() => {
-        this.addDevice().subscribe(() => {
+        .pipe(
+          flatMap(() => this.geolocationService.getCurrentPosition()),
+          flatMap((coords: Coords) => this.addDevice(coords)),
+        ).subscribe(() => {
           subscriber.next();
           subscriber.complete();
         });
-      });
     });
   }
 
-  addDevice(): Observable<Device> {
-    const device = { name: this.deviceName, wifiSSID: this.ssid, localIp: this.deviceLocalIp } as Device;
+  addDevice(coords: Coords): Observable<Device> {
+    const device = {
+      name: this.deviceName,
+      wifiSSID: this.ssid,
+      lat: coords.lat,
+      lng: coords.lng,
+      coordsLabel: coords.label
+    } as Device;
     return this.deviceService.createDevice(this.deviceUUID, CreateDeviceToDeviceJson(device));
   }
 

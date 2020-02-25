@@ -62,14 +62,6 @@ export class WifiNetworkService {
 
   disconnect(localIp: string): Observable<unknown> {
     return this.http.post(this.url(localIp) + '/disconnect', {}, this.httpOptions).pipe(
-      shareReplay(),
-      retryWhen(errors => {
-        return errors
-                .pipe(
-                    delayWhen(() => timer(1000)),
-                    tap(() => console.log('retrying...'))
-                );
-      }),
       catchError(this.handleError('wifi_networks/disconnect'))
     );
   }
