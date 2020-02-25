@@ -8,6 +8,8 @@ export class Device {
     public lng: number,
     public coordsLabel: string,
     public airlyApiKey: string,
+    public wifiSSID: string,
+    public localIp: string,
     public syncAt: string) {  }
 
     isConfiguring(): boolean {
@@ -36,15 +38,20 @@ export interface DeviceJson {
   lng: number;
   coords_label: string;
   airly_api_key: string;
+  wifi_ssid: string;
+  local_ip: string;
   sync_at: string;
 }
 
 export interface CreateDeviceJson {
   name: string;
+  wifi_ssid: string;
 }
 
 export interface UpdateDeviceJson {
   name: string;
+  wifi_ssid: string;
+  local_ip: string;
   lat: number;
   lng: number;
   coords_label: string;
@@ -61,6 +68,8 @@ export function DeviceJsonToDevice(json: DeviceJson): Device {
     json.lng,
     json.coords_label,
     json.airly_api_key,
+    json.wifi_ssid,
+    json.local_ip,
     json.sync_at,
   );
 }
@@ -68,12 +77,15 @@ export function DeviceJsonToDevice(json: DeviceJson): Device {
 export function CreateDeviceToDeviceJson(device: Device): CreateDeviceJson {
   return {
     name: device.name,
+    wifi_ssid: device.wifiSSID
   };
 }
 
 export function UpdateDeviceToDeviceJson(device: Device): UpdateDeviceJson {
   return {
     name: device.name,
+    wifi_ssid: device.wifiSSID,
+    local_ip: device.localIp,
     lat: device.lat,
     lng: device.lng,
     coords_label: device.coordsLabel,

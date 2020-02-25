@@ -26,7 +26,21 @@
       <ion-card-content [class.append-moving-dots]="device.isConfiguring()">
         {{device.status | titlecase }}
       </ion-card-content>
+    </ion-card>
 
+    <ion-card>
+      <ion-item>
+        <ion-icon name="wifi" slot="start"></ion-icon>
+        <ion-label position="stacked">Wifi</ion-label>
+        <ion-input readonly value="{{device.wifiSSID}}"></ion-input>
+        <ion-button
+          fill="outline"
+          slot="end"
+          [routerLink]="['/devices', device.uuid, 'wifi_networks' ]"
+        >
+        Edit
+      </ion-button>
+      </ion-item>
     </ion-card>
 
     <ion-card>
@@ -57,9 +71,9 @@
         <ion-input readonly value="{{device.airlyApiKeyPreview()}}"></ion-input>
         <ion-button fill="outline" slot="end" (click)="presentAirlyPrompt()">Edit</ion-button>
       </ion-item>
-      <!-- <section>
-        <ion-button expand="block" (click)="save()">Save</ion-button>
-      </section> -->
+      <section>
+        <ion-button color="danger" expand="block" (click)="presentDeleteDeviceConfirm()">DELETE DEVICE</ion-button>
+      </section>
     </ion-card>
   </div>
 </ion-content>

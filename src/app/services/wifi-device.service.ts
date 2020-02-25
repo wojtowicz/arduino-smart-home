@@ -27,7 +27,7 @@ export abstract class WifiDeviceService {
     return wifiDevice.SSID.includes('SmartHome');
   }
 
-  saveWifi(ssid: string, password: string): Observable<void> {
+  saveWifi(ssid: string, password: string, localIp: string): Observable<void> {
     return new Observable(subscriber => {
       this.listenOnNetworkConnect()
       .subscribe(() => {
@@ -35,7 +35,7 @@ export abstract class WifiDeviceService {
         subscriber.complete();
       });
 
-      this.wifiNetworkService.connect(ssid, password).subscribe();
+      this.wifiNetworkService.connect(ssid, password, localIp).subscribe();
     });
   }
 }

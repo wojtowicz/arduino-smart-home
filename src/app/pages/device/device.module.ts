@@ -9,6 +9,7 @@ import { DevicePageRoutingModule } from './device-routing.module';
 import { DevicePage } from './device.page';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { ConnectWifiModalPageModule } from '../modals/connect-wifi-modal/connect-wifi-modal.module';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
     FormsModule,
     IonicModule,
     DevicePageRoutingModule,
-    LeafletModule
+    LeafletModule,
+    ConnectWifiModalPageModule,
   ],
   declarations: [DevicePage]
 })

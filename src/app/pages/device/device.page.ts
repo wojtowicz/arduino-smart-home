@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DeviceService } from 'src/app/services/device.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GuiHelper } from 'src/app/helpers/gui.helper';
 
 import { Device, UpdateDeviceToDeviceJson } from '../../models/device'
@@ -53,29 +53,34 @@ export class DevicePage implements OnInit {
     private guiHelper: GuiHelper,
     private geolocation: Geolocation,
     public alertController: AlertController,
-    public toastController: ToastController
-  ) { }
+    public toastController: ToastController,
+    private router: Router,
+  ) {
+    route.params.subscribe(val => {
+      this.uuid = this.route.snapshot.paramMap.get('uuid');
+
+      this.guiHelper.wrapLoading(
+        forkJoin(
+          this.getCurrentPosition(),
+          this.deviceService.getDevice(this.uuid)
+        )
+      )
+      .subscribe(([coords, device]) => {
+        this.device = device;
+        this.subscribeConfiguringDevices();
+
+        this.currentCoords = coords;
+        if(this.device.isCoordsSet()){
+          this.centerTo(this.device.lat, this.device.lng);
+          this.createMarkerFor(this.device.lat, this.device.lng);
+        } else {
+          this.centerTo(this.currentCoords.lat, this.currentCoords.lng);
+        }
+      });
+    });
+  }
 
   ngOnInit() {
-    this.uuid = this.route.snapshot.paramMap.get('uuid');
-
-    this.guiHelper.wrapLoading(
-      forkJoin(
-        this.getCurrentPosition(),
-        this.deviceService.getDevice(this.uuid)
-      )
-    )
-    .subscribe(([coords, device]) => {
-      this.device = device;
-      this.subscribeConfiguringDevices();
-
-      this.currentCoords = coords;
-      if(!this.device.isCoordsSet())
-        this.centerTo(this.currentCoords.lat, this.currentCoords.lng);
-      else
-        this.centerTo(this.device.lat, this.device.lng);
-        this.createMarkerFor(this.device.lat, this.device.lng);
-    });
   }
 
   ngOnDestroy() {
@@ -112,7 +117,7 @@ export class DevicePage implements OnInit {
     this.loading = true;
     this.deviceService.getDevice(this.uuid)
       .pipe(
-          tap(device => this.loading = false)
+          tap(_device => this.loading = false)
         )
       .subscribe(device => this.device.status = device.status);
   }
@@ -143,10 +148,13 @@ export class DevicePage implements OnInit {
     from(provider.search({ query: this.device.lat + ' ' + this.device.lng }))
       .subscribe((result: { label: string }[]) => {
         const coordsData = result[0];
-        if(coordsData)
+        if(coordsData){
           this.device.coordsLabel = coordsData.label;
-        else
+        }
+        else{
           this.device.coordsLabel = '';
+        }
+        this.save();
       });
   }
 
@@ -226,6 +234,30 @@ export class DevicePage implements OnInit {
       duration: 2000
     });
     toast.present();
+  }
+
+  async presentDeleteDeviceConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Delete device!',
+      message: 'Are you sure you want to delete device?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+        }, {
+          text: 'Okay',
+          cssClass: 'danger',
+          handler: () => {
+            this.deviceService.deleteDevice(this.device.uuid).subscribe(() => {
+              this.router.navigate(['/tabs/tab1']);
+            });
+          }
+        }
+      ]
+    })
+
+    await alert.present();
   }
 
 }

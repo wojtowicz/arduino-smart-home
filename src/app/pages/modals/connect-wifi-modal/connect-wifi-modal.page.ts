@@ -16,9 +16,10 @@ import { Observable } from 'rxjs';
 })
 export class ConnectWifiModalPage {
 
-  @Input() ssid: string;
-  @Input() uuid: string;
   @Input() deviceName: string;
+  @Input() deviceUUID: string;
+  @Input() deviceLocalIp: string;
+  @Input() ssid: string;
   password: string;
 
   constructor(
@@ -40,7 +41,7 @@ export class ConnectWifiModalPage {
 
   saveWifiAndAddDevice(): Observable<void> {
     return new Observable(subscriber => {
-      this.wifiDeviceService.saveWifi(this.ssid, this.password)
+      this.wifiDeviceService.saveWifi(this.ssid, this.password, this.deviceLocalIp)
       .subscribe(() => {
         this.addDevice().subscribe(() => {
           subscriber.next();
@@ -51,8 +52,8 @@ export class ConnectWifiModalPage {
   }
 
   addDevice(): Observable<Device> {
-    const device = { name: this.deviceName } as Device;
-    return this.deviceService.createDevice(this.uuid, CreateDeviceToDeviceJson(device));
+    const device = { name: this.deviceName, wifiSSID: this.ssid, localIp: this.deviceLocalIp } as Device;
+    return this.deviceService.createDevice(this.deviceUUID, CreateDeviceToDeviceJson(device));
   }
 
   async closeModal(status: boolean): Promise<void> {
