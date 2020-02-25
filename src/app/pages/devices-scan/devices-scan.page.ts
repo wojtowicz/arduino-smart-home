@@ -7,6 +7,7 @@ import { GuiHelper } from '../../helpers/gui.helper';
 
 import { DeviceConnectModalPage } from '../modals/device-connect-modal/device-connect-modal.page';
 import { WifiDevice } from 'src/app/models/wifi_device';
+import { InfoService } from 'src/app/services/device/info.service';
 
 @Component({
   selector: 'app-devices-scan',
@@ -22,20 +23,12 @@ export class DevicesScanPage implements OnInit {
     private wifiDeviceService: WifiDeviceService,
     private guiHelper: GuiHelper,
     private router: Router,
+    private infoService: InfoService,
     public modalController: ModalController
   ) { }
 
   ngOnInit(): void {
     this.scanWifi();
-  }
-
-  async presentLoading(): Promise<HTMLIonLoadingElement> {
-    const loading = await this.loadingController.create({
-      message: 'Please wait...'
-    });
-    await loading.present();
-
-    return loading;
   }
 
   scanWifi(): void {
@@ -55,7 +48,16 @@ export class DevicesScanPage implements OnInit {
     modal.onDidDismiss()
       .then((results) => {
         const connected = results.data.connected;
-        if (connected) { this.router.navigate(['/devices', ssid, 'wifi_networks' ]); }
+        if (connected) {
+          this.guiHelper.wrapLoading(
+            this.infoService.getInfo()
+          ).subscribe(info => {
+            this.router.navigate(
+              ['/devices', info.chipId, 'wifi_networks' ],
+              { queryParams: { 'device_name': ssid } }
+            );
+          });
+        }
     });
 
     return await modal.present();

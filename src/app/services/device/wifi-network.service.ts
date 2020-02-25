@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, timer } from 'rxjs';
-import { catchError, shareReplay, retryWhen, delayWhen, tap, map, toArray } from 'rxjs/operators';
+import { catchError, shareReplay, retryWhen, delayWhen, tap, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 import { WifiNetwork, WifiNetworkJson, WifiNetworkAdapter } from '../../models/wifi_network';
-import { DeviceInfo, DeviceInfoJson, DeviceInfoAdapter } from 'src/app/models/device-info';
 
 import { IDataSource } from '../../interfaces/data-source.interface';
 import { IHttpOptions } from '../../interfaces/http-options.interface';
@@ -14,16 +13,13 @@ import { IHttpOptions } from '../../interfaces/http-options.interface';
   providedIn: 'root'
 })
 export class WifiNetworkService {
+
+  defaultLocalIp = '192.168.4.1';
+
   dataSources: IDataSource = {
     local: 'api/wifiNetworks',
-    remote: 'http://192.168.4.1/wifi_networks',
+    remote: 'http://:local_ip/wifi_networks',
     localhost: 'api/wifiNetworks',
-  };
-
-  infoDataSources: IDataSource = {
-    local: 'api/info',
-    remote: 'http://192.168.4.1/info',
-    localhost: 'api/info',
   };
 
   httpOptions: IHttpOptions = {
@@ -32,16 +28,12 @@ export class WifiNetworkService {
 
   constructor(private http: HttpClient) { }
 
-  url(): string {
-    return this.dataSources[environment.dataSource];
+  url(localIp: string): string {
+    return this.dataSources[environment.dataSource].replace(':local_ip', localIp || this.defaultLocalIp);
   }
 
-  infoUrl(): string {
-    return this.infoDataSources[environment.dataSource];
-  }
-
-  getWifiNetworks(): Observable<WifiNetwork[]> {
-    return this.http.get(this.url(), this.httpOptions).pipe(
+  getWifiNetworks(localIp: string): Observable<WifiNetwork[]> {
+    return this.http.get(this.url(localIp), this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -54,22 +46,8 @@ export class WifiNetworkService {
     );
   }
 
-  getInfo(): Observable<DeviceInfo> {
-    return this.http.get(this.infoUrl(), this.httpOptions).pipe(
-      shareReplay(),
-      retryWhen(errors => {
-        return errors
-                .pipe(
-                    delayWhen(() => timer(1000)),
-                    tap(() => console.log('retrying...'))
-                );
-      }),
-      map((json: DeviceInfoJson) => DeviceInfoAdapter(json)),
-    );
-  }
-
-  connect(ssid: string, password: string): Observable<unknown> {
-    return this.http.post(this.url() + '/connect', { ssid, password }, this.httpOptions).pipe(
+  connect(ssid: string, password: string, localIp: string): Observable<unknown> {
+    return this.http.post(this.url(localIp) + '/connect', { ssid, password }, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors
@@ -82,8 +60,8 @@ export class WifiNetworkService {
     );
   }
 
-  disconnect(): Observable<unknown> {
-    return this.http.post(this.url() + '/disconnect', {}, this.httpOptions).pipe(
+  disconnect(localIp: string): Observable<unknown> {
+    return this.http.post(this.url(localIp) + '/disconnect', {}, this.httpOptions).pipe(
       shareReplay(),
       retryWhen(errors => {
         return errors

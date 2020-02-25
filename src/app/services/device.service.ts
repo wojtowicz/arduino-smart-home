@@ -75,6 +75,12 @@ export class DeviceService {
     );
   }
 
+  deleteDevice(uuid: string): Observable<string> {
+    return this.http.delete<string>(this.url(uuid), this.httpOptions).pipe(
+      catchError(this.handleError<string>('deleteDevice')),
+    );
+  }
+
   private handleError<T>(operation: string = 'operation', result?: T): (error: Error | HttpErrorResponse) => Observable<T> {
     return (error: Error | HttpErrorResponse): Observable<T> => {
 

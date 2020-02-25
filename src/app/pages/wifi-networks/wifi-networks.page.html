@@ -8,10 +8,13 @@
   <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" *ngIf="!loading">
   <ion-list>
       <ion-item *ngFor="let wifiNetwork of wifiNetworks" (click)="openConnectWifiModalPage(wifiNetwork.ssid)">
           {{wifiNetwork.ssid}} ({{wifiNetwork.encryptionType}}, {{wifiNetwork.signalQuality}}%)
       </ion-item>
     </ion-list>
+    <section *ngIf="device && device.wifiSSID">
+      <ion-button color="danger" expand="block" (click)="presentDisconnectDeviceConfirm()">DISCONNECT</ion-button>
+    </section>
 </ion-content>
