@@ -1,4 +1,4 @@
-# Arduino SmartHome
+# Arduino SmartHome [![Build Status](https://travis-ci.org/wojtowicz/arduino-smart-home.svg?branch=master)](https://travis-ci.org/wojtowicz/arduino-smart-home)
 
 ionic cordova emulate android\
 ionic g service services/Photo\
