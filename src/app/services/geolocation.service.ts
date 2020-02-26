@@ -18,7 +18,7 @@ export class GeolocationService {
   getCurrentPosition(): Observable<Coords> {
     return new Observable(subscriber => {
       from(this.geolocation.getCurrentPosition()).pipe(
-        catchError(_error => {
+        catchError(error => {
           return of({ coords: { latitude: undefined, longitude: undefined } });
         }),
         flatMap((resp) => {
@@ -31,13 +31,13 @@ export class GeolocationService {
                           tap(() => console.log('retrying...'))
                       );
             }),
-          )
+          );
         }),
       )
       .subscribe(coords => {
         subscriber.next(coords);
         subscriber.complete();
-      })
+      });
     });
   }
 
@@ -48,7 +48,7 @@ export class GeolocationService {
       .subscribe((result: { label: string }[]) => {
         const coordsData = result[0];
         let label = '';
-        if(coordsData) label = coordsData.label;
+        if (coordsData) { label = coordsData.label; }
         subscriber.next(new Coords(lat, lng, label));
         subscriber.complete();
       });

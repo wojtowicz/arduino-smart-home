@@ -54,7 +54,7 @@ export class DevicesScanPage implements OnInit {
           ).subscribe(info => {
             this.router.navigate(
               ['/devices', info.chipId, 'wifi_networks' ],
-              { queryParams: { 'device_name': ssid } }
+              { queryParams: { device_name: ssid } }
             );
           });
         }

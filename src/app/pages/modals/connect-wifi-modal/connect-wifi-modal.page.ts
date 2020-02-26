@@ -39,7 +39,7 @@ export class ConnectWifiModalPage {
   }
 
   saveWifi(): void {
-    console.log('saveWifi')
+    console.log('saveWifi');
     this.guiHelper.wrapLoading(
       this.saveWifiAndAddDevice()
     ).subscribe(() => this.closeModal(true));
