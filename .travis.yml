@@ -1,0 +1,9 @@
+- language: node_js
+  node_js:
+    - '10.16.0'
+  install:
+    - npm install
+  before_script:
+    - npm install -g ionic cordova
+  script:
+    - ionic cordova build browser --prod
