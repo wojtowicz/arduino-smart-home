@@ -14,7 +14,7 @@ import { IHttpOptions } from '../../interfaces/http-options.interface';
 })
 export class WifiNetworkService {
 
-  defaultLocalIp = '192.168.4.1';
+  defaultLocalIp: string = '192.168.4.1';
 
   dataSources: IDataSource = {
     local: 'api/wifiNetworks',

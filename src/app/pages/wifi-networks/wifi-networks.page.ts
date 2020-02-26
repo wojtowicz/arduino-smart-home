@@ -38,7 +38,7 @@ export class WifiNetworksPage implements OnInit {
     private route: ActivatedRoute,
     public alertController: AlertController,
   ) {
-    route.params.subscribe(_params => {
+    route.params.subscribe(params => {
       this.getDevice().subscribe(device => {
         this.device = device;
         this.getWifiNetworks();
@@ -51,11 +51,11 @@ export class WifiNetworksPage implements OnInit {
 
   getDevice(): Observable<Device> {
     return new Observable(subscriber => {
-      let uuid = this.route.snapshot.paramMap.get('uuid');
-      let deviceName = this.route.snapshot.queryParamMap.get('device_name');
-      let newDevice = { uuid, name: deviceName } as Device;
+      const uuid = this.route.snapshot.paramMap.get('uuid');
+      const deviceName = this.route.snapshot.queryParamMap.get('device_name');
+      const newDevice = { uuid, name: deviceName } as Device;
 
-      if(deviceName){
+      if (deviceName) {
         subscriber.next(newDevice);
         subscriber.complete();
       } else {
@@ -86,7 +86,7 @@ export class WifiNetworksPage implements OnInit {
         deviceName: this.device.name,
         deviceUUID: this.device.uuid,
         deviceLocalIp: this.device.localIp,
-        ssid: ssid
+        ssid
       }
     });
 
