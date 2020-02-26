@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - '10.16.0'
+install:
+  - npm install
+before_script:
+  - npm install -g ionic cordova
+  - cp src/environments/environment.ts src/environments/environment.prod.ts
+script:
+  - npm run lint
+  - ionic build --prod
