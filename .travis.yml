@@ -6,4 +6,5 @@ install:
 before_script:
   - npm install -g ionic cordova
 script:
-  - ionic cordova build browser --prod
+  - npm run lint
+  - ionic build --prod
